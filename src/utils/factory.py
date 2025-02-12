@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Dict, Any
 
-from src.tools.parsers import JSONToolCallParser, NonJSONToolCallParser
+from src.tools.core.parsers import JSONToolCallParser, NonJSONToolCallParser
 from src.prompt_builders import (
     BasePromptBuilder,
     OpenAIPromptBuilder,

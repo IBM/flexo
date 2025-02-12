@@ -2,7 +2,7 @@
 
 import json5
 from typing import Dict, Any, List
-from src.tools.parsers.base_tool_call_parser import BaseToolCallParser
+from src.tools.core.parsers.base_tool_call_parser import BaseToolCallParser
 
 
 class JSONToolCallParser(BaseToolCallParser):

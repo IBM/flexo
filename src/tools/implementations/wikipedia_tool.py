@@ -1,13 +1,15 @@
-# src/tools/tools/wikipedia_tool.py
+# src/tools/implementations/wikipedia_tool.py
 
-from typing import Optional, Any, Dict
 from urllib.parse import quote
+from typing import Optional, Any, Dict
 
+from src.tools.core.tool_registry import ToolRegistry
 from src.data_models.tools import ContextModel, ToolResponse
-from src.tools.base_rest_tool import BaseRESTTool, ResponseFormat
 from src.utils.json_formatter import format_json_to_document
+from src.tools.core.base_rest_tool import BaseRESTTool, ResponseFormat
 
 
+@ToolRegistry.register_tool()
 class WikipediaTool(BaseRESTTool):
     def __init__(self, config: Optional[Dict] = None):
         """
@@ -18,7 +20,6 @@ class WikipediaTool(BaseRESTTool):
         self.description = "Fetch a summary of a Wikipedia page for a given query."
         self.strict = False
 
-        # Define the tool parameters that OpenAI (or another LLM) can use to call this tool.
         self.parameters = {
             "type": "object",
             "properties": {

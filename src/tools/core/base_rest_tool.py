@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 from asyncio import Lock, sleep
 from typing import Optional, Dict, Any, Union, List
 
-from src.tools.base_tool import BaseTool
-from src.tools.utils.token_manager import OAuth2ClientCredentialsManager
+from src.tools.core.base_tool import BaseTool
+from src.tools.core.utils.token_manager import OAuth2ClientCredentialsManager
 
 load_dotenv()
 

@@ -1,13 +1,15 @@
-# src/tools/tools/weather_tool.py
+# src/tools/implementations/weather_tool.py
 
 import os
 from typing import Optional, Any, Dict
 
+from src.tools.core.tool_registry import ToolRegistry
 from src.data_models.tools import ContextModel, ToolResponse
-from src.tools.base_rest_tool import BaseRESTTool, ResponseFormat
 from src.utils.json_formatter import format_json_to_document
+from src.tools.core.base_rest_tool import BaseRESTTool, ResponseFormat
 
 
+@ToolRegistry.register_tool()
 class WeatherTool(BaseRESTTool):
     def __init__(self, config: Optional[Dict] = None):
         super().__init__(config=config)

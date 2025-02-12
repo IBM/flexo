@@ -3,7 +3,7 @@
 import re
 import json
 from typing import Dict, Any
-from src.tools.parsers.base_tool_call_parser import BaseToolCallParser
+from src.tools.core.parsers.base_tool_call_parser import BaseToolCallParser
 
 
 class NonJSONToolCallParser(BaseToolCallParser):

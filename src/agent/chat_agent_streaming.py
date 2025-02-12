@@ -104,13 +104,13 @@ class StreamingChatAgent:
         self.logger.debug("Starting streaming agent processing")
 
         context = await self._initialize_context(conversation_history, api_passed_context)
-        self.detection_strategy.reset()
 
         while context.current_state != StreamState.COMPLETED:
             match context.current_state:
 
                 case StreamState.STREAMING:
                     self.logger.info(f"--- Entering Streaming State ---")
+                    self.detection_strategy.reset()
                     async for item in self._handle_streaming(context):
                         yield item
 
