@@ -1,4 +1,4 @@
-# src/tools/base_rest_tool.py
+# src/tools/core/base_rest_tool.py
 
 import os
 import json
