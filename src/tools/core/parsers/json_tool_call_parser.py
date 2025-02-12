@@ -1,4 +1,4 @@
-# src/parsers/json_tool_call_parser.py
+# src/tools/core/parsers/json_tool_call_parser.py
 
 import json5
 from typing import Dict, Any, List

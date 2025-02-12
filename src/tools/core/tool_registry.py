@@ -1,8 +1,8 @@
 # src/tools/core/tool_registry.py
 
 import logging
-import pkgutil
 import importlib
+import inspect
 from pathlib import Path
 from typing import Dict, List, Type, Optional, Callable
 
@@ -89,33 +89,54 @@ class ToolRegistry:
         """Discover and import all tool modules to trigger decorators.
 
         Scans the src/tools/implementations/ directory for Python modules and imports them
-        to trigger the registration decorators. Only tools placed in this specific
-        directory will be discovered. Skips files starting with '_'.
-
-        Note:
-            This is automatically called during initialization and typically
-            shouldn't be called directly.
+        to trigger the registration decorators. Only registers classes that inherit from BaseTool.
+        Note that actual registration is expected to occur via decorators; this method
+        performs additional validation by inspecting each module.
         """
         try:
-            import src.tools.implementations as implementations
-            implementations_path = Path(implementations.__file__).parent
+            # Get the current file's directory and navigate to implementations
+            current_dir = Path(__file__).parent.parent
+            implementations_path = current_dir / 'implementations'
 
             logger.debug(f"Scanning for tools in: {implementations_path}")
-            module_name = None
 
-            for module_info in pkgutil.iter_modules([str(implementations_path)]):
-                if not module_info.name.startswith('_'):
+            if not implementations_path.exists():
+                logger.error(f"Implementations directory not found at: {implementations_path}")
+                return
+
+            # Iterate through .py files in the implementations directory
+            for file_path in implementations_path.glob('*.py'):
+                if not file_path.name.startswith('_'):
+                    module_name = f"src.tools.implementations.{file_path.stem}"
                     try:
-                        module_name = f"src.tools.implementations.{module_info.name}"
-                        importlib.import_module(module_name)
-                        logger.debug(f"Imported tool module: {module_name}")
+                        module = importlib.import_module(module_name)
+
+                        for name, obj in inspect.getmembers(module):
+                            if inspect.isclass(obj) and issubclass(obj, BaseTool) and obj != BaseTool:
+                                tool_name = obj.__name__.lower().replace('tool', '')
+                                # Note: Registration still happens via decorator.
+                                # This is just additional validation.
+                                if tool_name in self._registered_tool_classes:
+                                    tool_class, is_hidden = self._registered_tool_classes[tool_name]
+                                    if not issubclass(tool_class, BaseTool):
+                                        logger.warning(
+                                            f"Skipping {tool_name}: not a BaseTool subclass"
+                                        )
+                                        del self._registered_tool_classes[tool_name]
+
+                        logger.debug(f"Processed module: {module_name}")
+
                     except ImportError as e:
                         logger.error(f"Failed to import {module_name}: {e}")
+                    except Exception as e:
+                        logger.error(f"Error processing {module_name}: {e}")
 
-        except ImportError as e:
+        except Exception as e:
             logger.error(f"Failed to discover tools: {e}")
 
-        logger.info(f"Tool discovery complete. Found {len(self._registered_tool_classes)} tools")
+        logger.info(
+            f"Tool discovery complete. Found {len(self._registered_tool_classes)} valid tools"
+        )
 
     def _initialize_registered_tools(self) -> None:
         """Initialize all registered tool classes with their configurations.

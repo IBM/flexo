@@ -22,7 +22,7 @@ from src.data_models.tools import ContextModel, ToolResponse
 from src.database import ElasticsearchClient, ElasticQueryBuilder
 
 
-@ToolRegistry.register_tool()
+# @ToolRegistry.register_tool()
 class RAGTool(BaseTool):
     def __init__(self, config: Optional[Dict] = None):
         super().__init__()

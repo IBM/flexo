@@ -43,8 +43,8 @@ use_vendor_chat_completions: false    # Options: true, false
 models_config:
   main_chat_model:
     # WatsonX Configuration
-    vendor: watsonx-granite # Options: watsonx-llama/granite/mistral, openai, anthropic, mistral-ai
-    model_id: ibm/granite-3-8b-instruct # Other options: mistralai/mistral-large, meta-llama/llama-3-405b-instruct, ibm/granite-3-8b-instruct
+    vendor: watsonx-llama # Options: watsonx-llama/granite/mistral, openai, anthropic, mistral-ai
+    model_id: meta-llama/llama-3-405b-instruct # Other options: mistralai/mistral-large, meta-llama/llama-3-405b-instruct, ibm/granite-3-8b-instruct
     decoding_method: greedy
     max_new_tokens: 4000
 

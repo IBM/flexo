@@ -1,4 +1,4 @@
-# src/tools/base_tool.py
+# src/tools/core/base_tool.py
 
 from typing import Optional, Dict
 from abc import abstractmethod
