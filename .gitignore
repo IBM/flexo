@@ -4,4 +4,4 @@
 *.idea
 *.pyc
 *__pycache__
-*.ipynb
+sandbox.ipynb

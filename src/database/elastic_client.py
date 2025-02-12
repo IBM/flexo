@@ -1,6 +1,6 @@
 import os
 from elasticsearch import AsyncElasticsearch
-from ..database.base_adapter import DatabaseAdapter
+from src.database.base_adapter import DatabaseAdapter
 
 
 class ElasticsearchClient(DatabaseAdapter):
@@ -34,7 +34,7 @@ class ElasticsearchClient(DatabaseAdapter):
         results = await es_client.search(query, "my_index")
         ```
     """
-    def __init__(self):
+    def __init__(self, verify_certs: bool = True):
         """Initialize the Elasticsearch client with credentials from environment variables.
 
         Establishes connection to Elasticsearch using endpoint and API key from
@@ -53,7 +53,7 @@ class ElasticsearchClient(DatabaseAdapter):
         self.client = AsyncElasticsearch(
             es_endpoint,
             api_key=es_api_key,
-            verify_certs=False,
+            verify_certs=verify_certs,
             request_timeout=60,
         )
 

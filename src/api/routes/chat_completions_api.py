@@ -24,11 +24,10 @@ from typing import List, Optional
 from fastapi.responses import StreamingResponse
 from starlette.status import HTTP_403_FORBIDDEN
 from fastapi.security.api_key import APIKeyHeader
-from pydantic import BaseModel, Field, TypeAdapter
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 
 from src.agent import StreamingChatAgent
-from src.data_models.tools import ContextModel
+from src.api.request_models import ChatCompletionRequest
 from src.data_models.chat_completions import (
     ConversationInput,
     TextChatMessage,
@@ -120,19 +119,6 @@ def convert_message_content(messages: List[TextChatMessage]) -> List[TextChatMes
     return converted
 
 
-class ChatCompletionRequest(BaseModel):
-    """Request model for chat completion endpoints.
-
-    Attributes:
-        model (Optional[str]): ID of the model to use for completion.
-        messages (List[dict]): Array of message objects with role and content.
-        context (Optional[ContextModel]): Additional context for API tools.
-    """
-    model: Optional[str] = Field(None, description="ID of the model to use")
-    messages: List[dict] = Field(..., description="Array of messages (role/content)")
-    context: Optional[ContextModel] = Field(None, description="Additional context values (e.g. for API tools)")
-
-
 @router.post(
     "/chat/completions",
     summary="Generate streaming chat completions",
@@ -165,21 +151,10 @@ async def chat_completions(
         HTTPException: If processing fails or invalid input is provided.
     """
     try:
-        logger.debug("Processing chat completion request with %d messages",
-                     len(request_body.messages))
-
-        # Convert raw messages to pydantic models
-        type_adapter = TypeAdapter(TextChatMessage)
-        parsed_messages = []
-        for m in request_body.messages:
-            role = m.get("role", "user")
-            content = m.get("content", "")
-            parsed_messages.append(
-                type_adapter.validate_python({"role": role, "content": content})
-            )
+        logger.debug(f"Processing chat completion request with {len(request_body.messages)} messages")
 
         # Prepare conversation input
-        conversation_input = ConversationInput(messages=parsed_messages)
+        conversation_input = ConversationInput(messages=request_body.messages)
         conversation_input.messages = convert_message_content(conversation_input.messages)
 
         logger.debug("Initiating streaming response")

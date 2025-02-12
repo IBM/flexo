@@ -5,7 +5,7 @@ watsonx-llama:
     begin_text: "<|begin_of_text|>"
   system_prompt:
     header: "You have access to the following tools: {tools}. Current date: {date}"
-    tool_instructions: 'Each tool call must contain "name" and "parameters". To use a tool, emit a call in the following JSON format:\n<|tool_call|>[{\"name\": \"tool_name\", \"parameters\": {\"arg1\": \"value1\"}}]'
+    tool_instructions: 'Each tool call must contain "name" and "parameters". To use a tool, emit a call in the following JSON format:\n<|tool_call|>[{\"name\": \"tool_name\", \"parameters\": {\"arg1\": \"value1\"}}]\n\n### Example:\n<|tool_call|>[{\"name\": \"tool_name_1\", \"parameters\": {\"param_1\": \"value_1\", \"param_2\": \"value_2\"}}]\n\nEnsure that all tool calls strictly follow this JSON format.'
 
 watsonx-granite:
   system_prompt:

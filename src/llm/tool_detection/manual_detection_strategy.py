@@ -5,7 +5,7 @@ from typing import List
 
 from src.api import SSEChunk
 from src.data_models.agent import StreamContext
-from src.tools.parsers import BaseToolCallParser
+from src.tools.core.parsers import BaseToolCallParser
 from src.data_models.chat_completions import ToolCall, FunctionDetail
 from src.llm.tool_detection import BaseToolCallDetectionStrategy
 from src.llm.pattern_detection.aho_corasick_pattern import AhoCorasickBufferedProcessor
@@ -71,11 +71,8 @@ class ManualToolCallDetectionStrategy(BaseToolCallDetectionStrategy):
         self.accumulation_mode = False
 
     async def detect_chunk(self, sse_chunk: SSEChunk, context: StreamContext) -> DetectionResult:
-        """Process a single chunk of streaming content for tool call detection.
-
-        Analyzes the incoming chunk for tool call patterns and maintains state across
-        chunks to detect complete tool calls. Can return partial content or hold it
-        for accumulation based on detection state.
+        """
+        Process a single chunk of streaming content for tool call detection.
 
         Args:
             sse_chunk (SSEChunk): The chunk of streaming content to process.
@@ -84,11 +81,8 @@ class ManualToolCallDetectionStrategy(BaseToolCallDetectionStrategy):
         Returns:
             DetectionResult: Result of processing the chunk, including detection state
                 and any content or tool calls found.
-
-        Note:
-            The method maintains internal state between calls to properly handle tool
-            calls that span multiple chunks.
         """
+        # If the chunk has no valid delta content, return NO_MATCH.
         if not sse_chunk.choices or not sse_chunk.choices[0].delta:
             return DetectionResult(state=DetectionState.NO_MATCH, sse_chunk=sse_chunk)
 
@@ -96,32 +90,32 @@ class ManualToolCallDetectionStrategy(BaseToolCallDetectionStrategy):
         if not chunk_content:
             return DetectionResult(state=DetectionState.NO_MATCH, sse_chunk=sse_chunk)
 
-        # Process chunk through pattern detector
+        # Process the chunk through the pattern detector.
         result = await self.pattern_detector.process_chunk(chunk_content)
 
         if result.error:
             return DetectionResult(state=DetectionState.NO_MATCH, sse_chunk=sse_chunk)
 
-        # Handle pattern match
+        # If a pattern is matched, switch into tool call mode.
+        # Return an empty string for content so that no part of the tool call leaks into the output.
         if result.matched:
             self.in_tool_call = True
             self.tool_call_buffer = result.text_with_tool_call
+            return DetectionResult(
+                state=DetectionState.PARTIAL_MATCH,
+                content="",  # No content is emitted once a tool call is detected
+                sse_chunk=sse_chunk
+            )
 
-            # If there's content before the tool call, return it
-            if result.output:
-                return DetectionResult(
-                    state=DetectionState.PARTIAL_MATCH,
-                    content=result.output,
-                    sse_chunk=sse_chunk
-                )
-            return DetectionResult(state=DetectionState.NO_MATCH, sse_chunk=sse_chunk)
-
-        # If collecting a tool call, add to buffer
+        # If already in tool call detection mode, continue accumulating and report a partial match.
         if self.in_tool_call:
             self.tool_call_buffer += chunk_content
-            return DetectionResult(state=DetectionState.NO_MATCH, sse_chunk=sse_chunk)
+            return DetectionResult(
+                state=DetectionState.PARTIAL_MATCH,
+                sse_chunk=sse_chunk
+            )
 
-        # Regular content - stream directly
+        # For regular content, if there is any output, return it as PARTIAL_MATCH.
         if result.output:
             return DetectionResult(
                 state=DetectionState.PARTIAL_MATCH,
@@ -129,6 +123,7 @@ class ManualToolCallDetectionStrategy(BaseToolCallDetectionStrategy):
                 sse_chunk=sse_chunk
             )
 
+        # If nothing of interest is found, return NO_MATCH.
         return DetectionResult(state=DetectionState.NO_MATCH, sse_chunk=sse_chunk)
 
     async def finalize_detection(self, context: StreamContext) -> DetectionResult:

@@ -1,6 +1,6 @@
 # src/tools/base_tool.py
 
-from typing import Optional
+from typing import Optional, Dict
 from abc import abstractmethod
 from src.data_models.tools import ContextModel, ToolResponse
 from src.data_models.tools import Tool, Function, FunctionParameters
@@ -12,7 +12,8 @@ class BaseTool:
     Provides the foundation for tool implementation with standard interfaces
     for execution, definition retrieval, and output parsing.
     """
-    def __init__(self):
+    def __init__(self, config: Optional[Dict] = None):
+        self.config = config or {}
         self.name = None
         self.description = None
         self.parameters = {}
