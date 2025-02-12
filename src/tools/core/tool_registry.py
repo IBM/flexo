@@ -154,15 +154,14 @@ class ToolRegistry:
         """
         logger.debug("Initializing registered tools")
         for tool_name, (tool_class, is_hidden) in self._registered_tool_classes.items():
-            tool_config = self.config.get(f"{tool_name}_tool")
-            if tool_config:
-                try:
-                    tool_instance = tool_class(config=tool_config)
-                    self.register_tool_instance(tool_instance, is_hidden)
-                    logger.info(f"Successfully initialized {tool_name} tool")
-                except Exception as e:
-                    logger.error(f"Failed to initialize {tool_name} tool: {str(e)}")
-                    raise
+            try:
+                tool_config = self.config.get(f"{tool_name}_tool")
+                tool_instance = tool_class(config=tool_config) if tool_config else tool_class()
+                self.register_tool_instance(tool_instance, is_hidden)
+                logger.info(f"Successfully initialized {tool_name} tool")
+            except Exception as e:
+                logger.error(f"Failed to initialize {tool_name} tool: {str(e)}")
+                raise
 
     @classmethod
     def register_tool(cls, hidden: bool = False) -> Callable:
