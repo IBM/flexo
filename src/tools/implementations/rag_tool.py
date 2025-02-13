@@ -24,10 +24,11 @@ from src.database import ElasticsearchClient, ElasticQueryBuilder
 
 # @ToolRegistry.register_tool()
 class RAGTool(BaseTool):
+    name = "rag_tool"
+
     def __init__(self, config: Optional[Dict] = None):
         super().__init__()
         self.config = config or {}
-        self.name = self.config.get("name", "medicare_search")
         self.strict = True
 
         self.description = ("Tool used to retrieve information from the 'Medicare & You 2025' handbook "

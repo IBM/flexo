@@ -1,191 +1,198 @@
 # src/tools/core/tool_registry.py
 
+import inspect
 import logging
 import importlib
-import inspect
 from pathlib import Path
+from pydantic import BaseModel, Field
 from typing import Dict, List, Type, Optional, Callable
 
 from src.data_models.tools import Tool
 from src.tools.core.base_tool import BaseTool
 
-logger = logging.getLogger(__name__)
+
+class RegistrationSummary(BaseModel):
+    """A Pydantic model that provides a summary of tool registration results.
+
+    This class encapsulates information about the tool registration process, including
+    statistics about scanned files, discovered tools, and any issues encountered during
+    the registration process.
+
+    Attributes:
+        total_files_scanned (Optional[int]): The total number of Python files scanned
+            during tool discovery.
+        total_tools_found (Optional[int]): The total number of valid tools found across
+            all scanned files.
+        visible_tools (Optional[List[str]]): Names of tools that are publicly accessible
+            in the registry.
+        hidden_tools (Optional[List[str]]): Names of tools that are registered but hidden
+            from public access.
+        failed_imports (Optional[List[str]]): List of import failures encountered during
+            tool discovery.
+        initialization_failures (List[str]): List of tools that failed to initialize
+            properly.
+    """
+    total_files_scanned: Optional[int] = Field(default="auto", description="Total number of files scanned.")
+    total_tools_found: Optional[int] = Field(default="auto", description="Total number of tools found.")
+    visible_tools: Optional[List[str]] = Field(default="auto", description="List of tools visible.")
+    hidden_tools: Optional[List[str]] = Field(default="auto", description="List of tools hidden.")
+    failed_imports: Optional[List[str]] = Field(default="auto", description="List of failed imports.")
+    initialization_failures: List[str] = Field(default="auto", description="List of initialization failures.")
+
+    def __str__(self) -> str:
+        return f"""Tool Registration Summary:
+├─ Files Scanned: {self.total_files_scanned}
+├─ Total Tools: {self.total_tools_found}
+│  ├─ Visible Tools ({len(self.visible_tools)}): {', '.join(self.visible_tools)}
+│  └─ Hidden Tools ({len(self.hidden_tools)}): {', '.join(self.hidden_tools)}
+└─ Issues:
+   ├─ Import Failures ({len(self.failed_imports)}): {', '.join(self.failed_imports) if self.failed_imports else 'None'}
+   └─ Init Failures ({len(self.initialization_failures)}): {', '.join(self.initialization_failures) if self.initialization_failures else 'None'}"""
 
 
 class ToolRegistry:
-    """A registry for managing and accessing system tools with decorator support.
+    """A singleton registry for managing and accessing system tools with decorator support.
 
-    This class implements a singleton pattern to ensure a single registry instance
-    manages all tools across the system. It supports automatic tool discovery from
-    the src/tools/implementations/ directory, registration via decorators, and
-    separate handling of hidden tools.
+    This class implements the Singleton pattern and provides functionality for:
+    - Discovering tools in a specified directory
+    - Registering tools via a decorator pattern
+    - Managing both visible and hidden tools
+    - Initializing tools with configuration
+    - Providing access to registered tools
 
     Attributes:
-        tools (Dict[str, BaseTool]): Dictionary of registered visible tools.
-        hidden_tools (Dict[str, BaseTool]): Dictionary of registered hidden tools.
-        config (Dict): Configuration settings for all tools.
-        initialized (bool): Flag indicating if the registry has been initialized.
-
-    Example:
-        ```python
-        # Initialize registry with configuration
-        config = {
-            "weather_tool": {"api_key": "abc123"},
-            "rag_tool": {"model": "gpt-4"}
-        }
-        registry = ToolRegistry(config)
-
-        # Register a tool using the decorator
-        @ToolRegistry.register_tool()
-        class WeatherTool(BaseTool):
-            pass
-
-        # Access a registered tool
-        weather_tool = registry.get_tool("weather")
-        ```
+        tools (Dict[str, BaseTool]): Dictionary of publicly accessible tools
+        hidden_tools (Dict[str, BaseTool]): Dictionary of hidden tools
+        config (Dict): Configuration dictionary for tool initialization
+        logger (logging.Logger): Logger instance for the registry
     """
 
     _instance = None
     _registered_tool_classes: Dict[str, tuple[Type[BaseTool], bool]] = {}
 
     def __new__(cls, *args, **kwargs) -> 'ToolRegistry':
-        """Ensure singleton instance of ToolRegistry.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-
-        Returns:
-            ToolRegistry: The singleton instance of the registry.
-        """
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
 
     def __init__(self, config: Optional[Dict] = None) -> None:
-        """Initialize the ToolRegistry with configuration settings.
-
-        Performs one-time initialization of the registry, including tool discovery
-        and configuration. Subsequent initializations with the same instance will
-        not repeat these steps.
-
-        Args:
-            config: Optional dictionary containing configuration settings for tools.
-                Each tool's config should be keyed by '{tool_name}_tool'.
-        """
         if not hasattr(self, 'initialized'):
-            logger.info("Initializing ToolRegistry")
             self.tools: Dict[str, BaseTool] = {}
             self.hidden_tools: Dict[str, BaseTool] = {}
             self.config = config or {}
             self.initialized = True
+            self.logger = logging.getLogger(self.__class__.__name__)
 
-            self._discover_tools()
-
+            summary = self._discover_tools()
             if config:
-                self._initialize_registered_tools()
+                init_failures = self._initialize_registered_tools()
+                summary.initialization_failures = init_failures
 
-    def _discover_tools(self) -> None:
+            self.logger.info(f" ---- IMPORTANT! ---- \n\n{summary}\n")
+
+    def _discover_tools(self) -> RegistrationSummary:
         """Discover and import all tool modules to trigger decorators.
 
-        Scans the src/tools/implementations/ directory for Python modules and imports them
-        to trigger the registration decorators. Only registers classes that inherit from BaseTool.
-        Note that actual registration is expected to occur via decorators; this method
-        performs additional validation by inspecting each module.
+        This method scans the implementations directory for Python files containing tool
+        definitions. It attempts to import each file and register any tool classes that
+        are properly decorated and configured.
+
+        Returns:
+            RegistrationSummary: A summary object containing information about the
+                discovery process, including counts of found tools and any errors
+                encountered.
         """
-        try:
-            # Get the current file's directory and navigate to implementations
-            current_dir = Path(__file__).parent.parent
-            implementations_path = current_dir / 'implementations'
+        current_dir = Path(__file__).parent.parent
+        implementations_path = current_dir / 'implementations'
 
-            logger.debug(f"Scanning for tools in: {implementations_path}")
+        if not implementations_path.exists():
+            return RegistrationSummary(initialization_failures=["Implementations directory not found"])
 
-            if not implementations_path.exists():
-                logger.error(f"Implementations directory not found at: {implementations_path}")
-                return
+        python_files = [f for f in implementations_path.glob('*.py') if not f.name.startswith('_')]
+        failed_imports = []
+        visible_tools = []
+        hidden_tools = []
 
-            # Iterate through .py files in the implementations directory
-            for file_path in implementations_path.glob('*.py'):
-                if not file_path.name.startswith('_'):
-                    module_name = f"src.tools.implementations.{file_path.stem}"
-                    try:
-                        module = importlib.import_module(module_name)
+        for file_path in python_files:
+            module_name = f"src.tools.implementations.{file_path.stem}"
+            try:
+                module = importlib.import_module(module_name)
 
-                        for name, obj in inspect.getmembers(module):
-                            if inspect.isclass(obj) and issubclass(obj, BaseTool) and obj != BaseTool:
-                                tool_name = obj.__name__.lower().replace('tool', '')
-                                # Note: Registration still happens via decorator.
-                                # This is just additional validation.
-                                if tool_name in self._registered_tool_classes:
-                                    tool_class, is_hidden = self._registered_tool_classes[tool_name]
-                                    if not issubclass(tool_class, BaseTool):
-                                        logger.warning(
-                                            f"Skipping {tool_name}: not a BaseTool subclass"
-                                        )
-                                        del self._registered_tool_classes[tool_name]
+                for name, obj in inspect.getmembers(module):
+                    if inspect.isclass(obj) and issubclass(obj, BaseTool) and obj != BaseTool:
+                        if hasattr(obj, 'name') and isinstance(obj.name, str):
+                            tool_name = obj.name
+                        else:
+                            continue
 
-                        logger.debug(f"Processed module: {module_name}")
+                        if tool_name in self._registered_tool_classes:
+                            _, is_hidden = self._registered_tool_classes[tool_name]
+                            if is_hidden:
+                                hidden_tools.append(tool_name)
+                            else:
+                                visible_tools.append(tool_name)
 
-                    except ImportError as e:
-                        logger.error(f"Failed to import {module_name}: {e}")
-                    except Exception as e:
-                        logger.error(f"Error processing {module_name}: {e}")
+            except ImportError as e:
+                failed_imports.append(f"{module_name}: {str(e)}")
 
-        except Exception as e:
-            logger.error(f"Failed to discover tools: {e}")
-
-        logger.info(
-            f"Tool discovery complete. Found {len(self._registered_tool_classes)} valid tools"
+        return RegistrationSummary(
+            total_files_scanned=len(python_files),
+            total_tools_found=len(visible_tools) + len(hidden_tools),
+            visible_tools=visible_tools,
+            hidden_tools=hidden_tools,
+            failed_imports=failed_imports,
+            initialization_failures=[]
         )
 
-    def _initialize_registered_tools(self) -> None:
+    def _initialize_registered_tools(self) -> List[str]:
         """Initialize all registered tool classes with their configurations.
 
-        Creates instances of all registered tool classes using their corresponding
-        configurations from the config dictionary provided during initialization.
+        This method attempts to create instances of all registered tool classes using
+        their corresponding configurations from the registry's config dictionary.
 
-        Note:
-            This is automatically called during initialization when config is provided
-            and typically shouldn't be called directly.
-
-        Raises:
-            Exception: If tool initialization fails, the original exception is logged
-                and re-raised.
+        Returns:
+            List[str]: A list of error messages for any tools that failed to initialize
+                properly. Each entry is formatted as "tool_name: error_message".
         """
-        logger.debug("Initializing registered tools")
+        initialization_failures = []
+
         for tool_name, (tool_class, is_hidden) in self._registered_tool_classes.items():
             try:
-                tool_config = self.config.get(f"{tool_name}_tool")
+                tool_config = self.config.get(tool_name)
+
+                if tool_config is None:
+                    self.logger.warning(
+                        f"⚠️ No configuration found for tool '{tool_name}'. Proceeding with default settings.")
+
                 tool_instance = tool_class(config=tool_config) if tool_config else tool_class()
                 self.register_tool_instance(tool_instance, is_hidden)
-                logger.info(f"Successfully initialized {tool_name} tool")
             except Exception as e:
-                logger.error(f"Failed to initialize {tool_name} tool: {str(e)}")
-                raise
+                initialization_failures.append(f"{tool_name}: {str(e)}")
+
+        return initialization_failures
 
     @classmethod
     def register_tool(cls, hidden: bool = False) -> Callable:
-        """Class method decorator for registering tool classes.
+        """Class method decorator for registering tool classes in the registry.
+
+        This decorator registers a tool class with the registry. The decorated class
+        must have a 'name' attribute defined as a string.
 
         Args:
-            hidden: If True, the tool will be registered as a hidden tool,
-                accessible only through get_hidden_tool() and not seen by the LLM.
+            hidden (bool, optional): If True, the tool will be registered as hidden
+                and only accessible via get_hidden_tool(). Defaults to False.
 
         Returns:
-            A decorator function that registers the tool class.
+            Callable: A decorator function that registers the tool class.
 
-        Example:
-            ```python
-            @ToolRegistry.register_tool(hidden=True)
-            class InternalTool(BaseTool):
-                pass
-            ```
+        Raises:
+            ValueError: If the decorated class doesn't have a valid 'name' attribute.
         """
-
         def decorator(tool_class: Type[BaseTool]) -> Type[BaseTool]:
-            tool_name = tool_class.__name__.lower().replace('tool', '')
-            cls._registered_tool_classes[tool_name] = (tool_class, hidden)
-            logger.debug(f"Registered tool class: {tool_class.__name__}")
+            if not hasattr(tool_class, 'name') or not isinstance(tool_class.name, str):
+                raise ValueError(f"Tool class '{tool_class.__name__}' must define a 'name' attribute as a string.")
+
+            cls._registered_tool_classes[tool_class.name] = (tool_class, hidden)
             return tool_class
 
         return decorator
@@ -194,77 +201,41 @@ class ToolRegistry:
         """Register a tool instance in the registry.
 
         Args:
-            tool: The tool instance to register.
-            hidden: If True, registers the tool as a hidden tool.
-
-        Note:
-            If a tool with the same name already exists in the target registry
-            (hidden or visible), it will be overwritten with a warning.
+            tool (BaseTool): The tool instance to register
+            hidden (bool, optional): If True, registers the tool as hidden.
+                Defaults to False.
         """
-        logger.debug(f"Registering tool instance: {tool.name} (hidden={hidden})")
-
-        if hidden:
-            if tool.name in self.hidden_tools:
-                logger.warning(f"Hidden tool {tool.name} already registered, overwriting")
-            self.hidden_tools[tool.name] = tool
-        else:
-            if tool.name in self.tools:
-                logger.warning(f"Tool {tool.name} already registered, overwriting")
-            self.tools[tool.name] = tool
-
-        logger.debug(f"Tool {tool.name} successfully registered as {'hidden' if hidden else 'visible'} tool")
+        target_dict = self.hidden_tools if hidden else self.tools
+        target_dict[tool.name] = tool
 
     def get_tool(self, name: str) -> Optional[BaseTool]:
         """Retrieve a registered tool by name.
 
         Args:
-            name: The name of the tool to retrieve.
+            name (str): The name of the tool to retrieve
 
         Returns:
-            The requested tool instance if found, None otherwise.
-
-        Note:
-            This method only searches visible tools. For hidden tools,
-            use get_hidden_tool().
+            Optional[BaseTool]: The requested tool instance if found, None otherwise
         """
-        tool = self.tools.get(name)
-        if tool:
-            logger.debug(f"Retrieved tool: {name}")
-        else:
-            logger.warning(f"Tool not found: {name}")
-        return tool
+        return self.tools.get(name)
 
     def get_hidden_tool(self, name: str) -> Optional[BaseTool]:
         """Retrieve a hidden tool by name.
 
         Args:
-            name: The name of the hidden tool to retrieve.
+            name (str): The name of the hidden tool to retrieve
 
         Returns:
-            The requested hidden tool instance if found, None otherwise.
-
-        Note:
-            This method only searches hidden tools. For visible tools,
-            use get_tool().
+            Optional[BaseTool]: The requested hidden tool instance if found,
+                None otherwise
         """
-        tool = self.hidden_tools.get(name)
-        if tool:
-            logger.debug(f"Retrieved hidden tool: {name}")
-        else:
-            logger.warning(f"Hidden tool not found: {name}")
-        return tool
+        return self.hidden_tools.get(name)
 
     def get_tool_definitions(self) -> List[Tool]:
         """Get definitions for all registered non-hidden tools.
 
         Returns:
-            A list of tool definitions for all visible tools in the registry.
-
-        Note:
-            Hidden tools are excluded from this list by design.
+            List[Tool]: A list of tool definitions for all visible tools in the
+                registry
         """
-        logger.debug(f"Retrieving tool definitions for {len(self.tools)} tools")
-        definitions = [tool.get_definition() for tool in self.tools.values()]
-        logger.debug("Retrieved definitions for tools: %s",
-                     ", ".join(tool.name for tool in self.tools.values()))
-        return definitions
+        return [tool.get_definition() for tool in self.tools.values()]

@@ -52,6 +52,7 @@ def handle_streaming_errors(func: Callable[..., AsyncGenerator[SSEChunk, None]])
 class StreamingChatAgent:
     def __init__(self, config: Dict) -> None:
         self.config = config
+        self.response_model_name = "main_chat_model"
         self.history_limit = self.config.get('history_limit', 3)
         self.system_prompt = self.config.get('system_prompt')
 
@@ -70,7 +71,7 @@ class StreamingChatAgent:
         self.use_vendor_chat_completions = self.config.get("use_vendor_chat_completions", True)
 
         # Load parser config if needed for manual detection
-        self.logger.info(f" ---- IMPORTANT! ---- Main Chat Model Config: {json.dumps(self.main_chat_model_config, indent=4)}")
+        self.logger.info(f" ---- IMPORTANT! ----\n\nMain Chat Model Config:\n{json.dumps(self.main_chat_model_config, indent=4)}\n")
         self.logger.info(f" ---- IMPORTANT! ---- Tool Detection Mode: {self.detection_mode}")
         self.logger.info(f" ---- IMPORTANT! ---- Vendor Chat API Mode: {self.use_vendor_chat_completions}")
         if self.detection_mode == "manual":
@@ -171,11 +172,8 @@ class StreamingChatAgent:
         stream_kwargs = {k: v for k, v in stream_kwargs.items() if v is not None}
 
         self.logger.debug(f"stream_kwargs: {stream_kwargs}")
-
-        stream_gen = (
-            context.response_model.gen_sse_stream if isinstance(llm_input, str)
-            else context.response_model.gen_chat_sse_stream
-        )
+        llm_adapter = context.llm_factory.get_adapter(self.response_model_name)
+        stream_gen = llm_adapter.gen_sse_stream if isinstance(llm_input, str) else llm_adapter.gen_chat_sse_stream
 
         accumulated_content = []
         async for sse_chunk in stream_gen(**stream_kwargs):
@@ -297,7 +295,7 @@ class StreamingChatAgent:
             conversation_history=selected_history,
             tool_definitions=self.tool_registry.get_tool_definitions(),
             context=api_passed_context,
-            response_model=self.llm_factory.get_adapter('main_chat_model'),
+            llm_factory=self.llm_factory,
             current_state=StreamState.STREAMING,
             max_streaming_iterations=self.config.get("max_streaming_iterations", 1),
             streaming_entry_count=0

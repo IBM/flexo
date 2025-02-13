@@ -11,12 +11,13 @@ from src.tools.core.base_rest_tool import BaseRESTTool, ResponseFormat
 
 @ToolRegistry.register_tool()
 class WikipediaTool(BaseRESTTool):
+    name = "wikipedia_tool"
+
     def __init__(self, config: Optional[Dict] = None):
         """
         Initialize the WikipediaTool with configuration options.
         """
         super().__init__(config=config)
-        self.name = self.config.get("name", "wikipedia_tool")
         self.description = "Fetch a summary of a Wikipedia page for a given query."
         self.strict = False
 

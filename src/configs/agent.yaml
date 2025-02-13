@@ -58,19 +58,15 @@ models_config:
 tools_config:
   # Weather API Integration
   weather_tool:
-    name: weather_tool
     endpoint_url: "https://api.openweathermap.org/data/2.5/weather"
     api_key_env: "OWM_API_KEY"
   
   # Wikipedia API Integration
   wikipedia_tool:
-    name: wikipedia_tool
     endpoint_url: "https://{lang}.wikipedia.org/api/rest_v1/page/summary/{encoded_query}"
 
   # RAG Tool with Elasticsearch (optional, not enabled by default)
   rag_tool:
-    name: rag_tool
-    description: "Tool used to retrieve information from the 'Attention Is All You Need' paper using natural language search."
     connector_config:
       connector_type: elasticsearch
       index_name: my_index

@@ -1,12 +1,12 @@
 # src/data_models/agent.py
 
 from enum import Enum
-from typing import List, Optional, Any, Dict, AsyncGenerator
 from pydantic import BaseModel, Field
-from .chat_completions import TextChatMessage, ToolCall
-from .tools import Tool
-from ..llm.adapters.base_vendor_adapter import BaseVendorAdapter
-from ..api.sse_models import SSEChunk
+from typing import List, Optional, Any, Dict
+
+from src.llm import LLMFactory
+from src.data_models.tools import Tool
+from src.data_models.chat_completions import TextChatMessage, ToolCall
 
 
 class StreamState(Enum):
@@ -50,7 +50,7 @@ class StreamResult(BaseModel):
         status (Optional[str]): Status message indicating state changes or completion.
             Used to communicate processing progress.
         should_continue (bool): Flag indicating if streaming should continue.
-            Defaults to True, set to False to terminate streaming.
+            Defaults to True, set to False for terminating streaming.
 
     Example:
         ```python
@@ -94,13 +94,11 @@ class StreamContext(BaseModel):
         message_buffer (str): Buffer for accumulating generated response text.
         tool_call_buffer (str): Buffer for accumulating potential tool call text until parsing.
         current_tool_call (Optional[List[ToolCall]]): The currently processing tool calls, if any.
-        current_generator (Optional[AsyncGenerator[SSEChunk, None]]): The active response generator
-            that yields SSEChunk objects.
         current_state (StreamState): The current state of the stream processing.
         streaming_entry_count (int): Counter tracking the number of times the streaming state has been entered.
         max_streaming_iterations (int): The maximum allowed number of times the streaming state can be initiated.
         context (Optional[Dict[str, Any]]): Additional metadata associated with the streaming session.
-        response_model (Optional[BaseVendorAdapter]): The model instance used for generating responses.
+        llm_factory (Optional[BaseVendorAdapter]): The model instance used for generating responses.
     """
 
     conversation_history: List[TextChatMessage] = Field(
@@ -123,10 +121,6 @@ class StreamContext(BaseModel):
         default=None,
         description="Currently processing tool calls."
     )
-    current_generator: Optional[AsyncGenerator[SSEChunk, None]] = Field(
-        default=None,
-        description="Current response generator yielding SSEChunk objects."
-    )
     current_state: StreamState = Field(
         default=None,
         description="Current state of the stream processing."
@@ -143,9 +137,9 @@ class StreamContext(BaseModel):
         default=None,
         description="Optional metadata associated with the streaming session."
     )
-    response_model: Optional[BaseVendorAdapter] = Field(
+    llm_factory: Optional[LLMFactory] = Field(
         default=None,
-        description="The model used for generating responses."
+        description="LLM Model factory for retrieving LLM adapters."
     )
 
     class Config:
