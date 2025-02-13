@@ -11,10 +11,10 @@ from src.tools.core.base_rest_tool import BaseRESTTool, ResponseFormat
 
 @ToolRegistry.register_tool()
 class WeatherTool(BaseRESTTool):
+    name = "weather_tool"
+
     def __init__(self, config: Optional[Dict] = None):
         super().__init__(config=config)
-
-        self.name = self.config.get("name", "weather_tool")
         self.description = 'Get current temperature and weather information for a specified location.'
         self.strict = False
 

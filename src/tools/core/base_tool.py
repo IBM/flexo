@@ -12,9 +12,10 @@ class BaseTool:
     Provides the foundation for tool implementation with standard interfaces
     for execution, definition retrieval, and output parsing.
     """
+    name: str
+
     def __init__(self, config: Optional[Dict] = None):
         self.config = config or {}
-        self.name = None
         self.description = None
         self.parameters = {}
         self.strict = False
