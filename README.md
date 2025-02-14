@@ -86,14 +86,21 @@ docker run -p 8000:8000 --env-file .env flexo-agent
 ```
 flexo/
 ├── docs/
-├── src/                # Source code
-│   ├── configs/        # Configuration files
-│   └── ...             # Other modules
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── requirements.txt
-├── Dockerfile
-└── README.md
+├── src/
+│   ├── agent/            # Agent(s)
+│   ├── api/              # API endpoints
+│   ├── configs/          # Configurations
+│   ├── data_models/      # Data models
+│   ├── database/         # Database adapters
+│   ├── llm/              # LLM components
+│   ├── prompt_builders/  # Core prompt generation
+│   ├── tools/                   # 🔧 Add your custom tools here!
+│   │   ├── core/                # Core tool components
+│   │   ├── implementations/     # Custom tool implementations
+│   │   └──notebooks/            # Jupyter notebooks for tool development
+│   ├── utils/            # Utils/shared code
+│   └── main.py           # App entry point
+└── ...
 ```
 
 ---
