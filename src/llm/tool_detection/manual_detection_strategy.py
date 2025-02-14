@@ -177,8 +177,7 @@ class ManualToolCallDetectionStrategy(BaseToolCallDetectionStrategy):
         self.logger.debug("No final content to return")
         return DetectionResult(state=DetectionState.NO_MATCH)
 
-    @staticmethod
-    def _extract_tool_calls(parsed_output: dict) -> List[ToolCall]:
+    def _extract_tool_calls(self, parsed_output: dict) -> List[ToolCall]:
         """Extract structured tool calls from parsed JSON output.
 
         Converts the parsed JSON format into a list of ToolCall objects with
@@ -193,6 +192,7 @@ class ManualToolCallDetectionStrategy(BaseToolCallDetectionStrategy):
         tool_calls = []
         for tool_call_dict in parsed_output.get("tool_calls", []):
             tool_call_args = tool_call_dict.get("parameters", tool_call_dict.get("arguments"))
+            self.logger.debug("Extracting tool call arguments: %s", tool_call_args)
             tool_calls.append(ToolCall(
                 id='123456789',  # Placeholder ID; modify as needed
                 type=tool_call_dict.get("type", "function"),
