@@ -81,18 +81,25 @@ When creating new tool implementations, follow these guidelines:
      - Implement all required abstract methods
      - Call `super().__init__()` in constructor
 
-2. **Error Handling**
+2. **Stream Context Integration**: StreamContext enables tools to access and interact with the conversation session state. It provides:
+     - Access to conversation history and message buffers for context-aware processing and responses
+     - Tool definitions and current tool calls to coordinate complex multistep operations
+     - Session metadata and configuration for customized tool behavior
+     - LLM factory methods for dynamic model access and generation 
+     - For detailed documentation, see [Agent Data Models](../../data_models/agent.md).
+
+3. **Error Handling**
      - Use appropriate exception classes
      - Provide meaningful error messages
      - Handle API-specific error cases
      - Include proper logging
 
-3. **Configuration**
+4. **Configuration**
      - Use environment variables for sensitive data
      - Make tool behavior configurable
      - Document all configuration options
 
-4. **Response Format**
+5. **Response Format**
      - Return structured data
      - Follow consistent response patterns
      - Include status indicators

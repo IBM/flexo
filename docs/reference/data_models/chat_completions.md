@@ -63,19 +63,3 @@
         heading_level: 1
 
 ---
-
-::: src.data_models.chat_completions.ToolMessage
-    options:
-        show_root_heading: true
-        show_source: true
-        heading_level: 1
-
----
-
-::: src.data_models.chat_completions.ConversationInput
-    options:
-        show_root_heading: true
-        show_source: true
-        heading_level: 1
-
----

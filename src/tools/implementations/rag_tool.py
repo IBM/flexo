@@ -17,8 +17,9 @@ import asyncio
 from typing import Optional, Dict
 
 from src.tools.core.base_tool import BaseTool
+from src.data_models.tools import ToolResponse
+from src.data_models.agent import StreamContext
 from src.tools.core.tool_registry import ToolRegistry
-from src.data_models.tools import ContextModel, ToolResponse
 from src.database import ElasticsearchClient, ElasticQueryBuilder
 
 
@@ -63,7 +64,7 @@ class RAGTool(BaseTool):
         self.max_retries = elasticsearch_config.get('max_retries', 3)
         self.index_name = elasticsearch_config.get('index_name', 'medicare_handbook_2025')
 
-    async def execute(self, context: Optional[ContextModel] = None, **kwargs) -> ToolResponse:
+    async def execute(self, context: Optional[StreamContext] = None, **kwargs) -> ToolResponse:
         """Executes the RAG (Retrieval-Augmented Generation) tool to retrieve Medicare-related content.
 
         This method performs a search query against an Elasticsearch index to retrieve relevant

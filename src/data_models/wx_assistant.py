@@ -2,8 +2,8 @@
 
 from pydantic import BaseModel
 from typing import List, Optional
-from ..data_models.tools import ContextModel
-from ..data_models.chat_completions import TextChatMessage, UserMessage, AssistantMessage, UserTextContent
+from src.api.request_models import ContextModel
+from src.data_models.chat_completions import TextChatMessage, UserMessage, AssistantMessage, UserTextContent
 
 
 class WxAssistantMessage(BaseModel):

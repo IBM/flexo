@@ -98,7 +98,7 @@ class StreamContext(BaseModel):
         streaming_entry_count (int): Counter tracking the number of times the streaming state has been entered.
         max_streaming_iterations (int): The maximum allowed number of times the streaming state can be initiated.
         context (Optional[Dict[str, Any]]): Additional metadata associated with the streaming session.
-        llm_factory (Optional[BaseVendorAdapter]): The model instance used for generating responses.
+        llm_factory (Optional[LLMFactory]): LLM factory associated with the streaming agent.
     """
 
     conversation_history: List[TextChatMessage] = Field(

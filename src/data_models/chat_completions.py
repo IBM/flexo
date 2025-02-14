@@ -1,9 +1,8 @@
 # src/data_models/chat_completions.py
 
 import json
-from typing import List, Union, Optional, Literal, Annotated, Dict
 from pydantic import BaseModel, Field, ConfigDict
-from ..data_models.tools import ContextModel
+from typing import List, Union, Optional, Literal, Annotated, Dict
 
 
 class MessageBase(BaseModel):
@@ -219,19 +218,3 @@ TextChatMessage = Annotated[
     Union[UserMessage, AssistantMessage, SystemMessage, ToolMessage],
     Field(discriminator='role')
 ]
-
-
-class ConversationInput(BaseModel):
-    """Represents the input structure for a chat completion conversation.
-
-    This model defines the complete structure of a conversation input, including
-    all messages and optional context and status update preferences.
-
-    Attributes:
-        messages (List[TextChatMessage]): List of all messages in the conversation.
-        context (Optional[ContextModel]): Optional context information for the conversation.
-        include_status_updates (Optional[bool]): Flag to include status updates. Defaults to False.
-    """
-    messages: List[TextChatMessage]
-    context: Optional[ContextModel] = None
-    include_status_updates: Optional[bool] = False

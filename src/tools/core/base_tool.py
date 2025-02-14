@@ -2,7 +2,8 @@
 
 from typing import Optional, Dict
 from abc import abstractmethod
-from src.data_models.tools import ContextModel, ToolResponse
+from src.data_models.tools import ToolResponse
+from src.data_models.agent import StreamContext
 from src.data_models.tools import Tool, Function, FunctionParameters
 
 
@@ -21,7 +22,7 @@ class BaseTool:
         self.strict = False
 
     @abstractmethod
-    async def execute(self, context: Optional[ContextModel] = None, **kwargs) -> ToolResponse:
+    async def execute(self, context: Optional[StreamContext] = None, **kwargs) -> ToolResponse:
         """Execute the tool's main functionality."""
         pass
 

@@ -111,33 +111,6 @@ class ToolsList(BaseModel):
     tools: List[Tool] = Field(..., max_length=128)
 
 
-class ContextValue(BaseModel):
-    """Represents a key-value pair for contextual information.
-
-    This model is used to store individual pieces of context data
-    that can be passed to tools or used in conversation.
-
-    Attributes:
-        key (str): The identifier for this piece of context
-        value (str): The actual context value
-    """
-    key: str
-    value: str
-
-
-class ContextModel(BaseModel):
-    """Container for multiple context values.
-
-    This model serves as a collection of context values that can be
-    passed around the system to provide additional information to
-    tools and conversations.
-
-    Attributes:
-        values (List[ContextValue]): List of context key-value pairs
-    """
-    values: List[ContextValue]
-
-
 class ToolResponse(BaseModel):
     """Represents the standardized output of a tool execution."""
 
