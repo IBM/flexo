@@ -1,4 +1,4 @@
-::: src.tools.parsers.base_tool_call_parser.BaseToolCallParser
+::: src.tools.core.parsers.base_tool_call_parser.BaseToolCallParser
     options:
         show_root_heading: true
         show_source: true
