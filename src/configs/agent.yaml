@@ -4,7 +4,6 @@
 # Basic agent configuration
 name: flexo
 history_limit: 4
-logging_level: INFO
 max_streaming_iterations: 3 # Number of times the agent is allowed to return to streaming (e.g. after tools execution)
 
 # Response timeouts
