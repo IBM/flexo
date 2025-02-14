@@ -50,6 +50,32 @@ def handle_streaming_errors(func: Callable[..., AsyncGenerator[SSEChunk, None]])
 
 
 class StreamingChatAgent:
+    """An agent that handles streaming chat interactions with support for tool execution.
+
+    This agent processes conversations in a streaming fashion, handling message generation,
+    tool detection, and tool execution. It supports both vendor-specific and manual tool
+    detection strategies.
+
+    Args:
+        config (Dict): Configuration dictionary containing:
+
+            - `history_limit` (int): Maximum number of historical messages to consider
+            - `system_prompt` (str): System prompt to prepend to conversations
+            - `detection_mode` (str): Mode for tool detection ('vendor' or 'manual')
+            - `use_vendor_chat_completions` (bool): Whether to use vendor chat completions
+            - `models_config` (Dict): Configuration for language models
+            - `tools_config` (Dict): Configuration for available tools
+            - `logging_level` (str): Logging level (default: 'INFO')
+            - `max_streaming_iterations` (int): Maximum number of streaming iterations
+
+    Attributes:
+        response_model_name (str): Name of the main chat model
+        history_limit (int): Maximum number of historical messages to consider
+        system_prompt (str): System prompt prepended to conversations
+        logger (logging.Logger): Logger instance for the agent
+        detection_mode (str): Current tool detection mode
+        use_vendor_chat_completions (bool): Whether vendor chat completions are enabled
+    """
     def __init__(self, config: Dict) -> None:
         self.config = config
         self.response_model_name = "main_chat_model"
@@ -102,6 +128,25 @@ class StreamingChatAgent:
             conversation_history: List[TextChatMessage],
             api_passed_context: Optional[Dict[str, Any]] = None
     ) -> AsyncGenerator[SSEChunk, None]:
+        """Process a conversation step in a streaming fashion.
+
+        Handles the main conversation flow, including message generation, tool detection,
+        and tool execution. The process flows through different states until completion.
+
+        Args:
+            conversation_history (List[TextChatMessage]): List of previous conversation messages
+            api_passed_context (Optional[Dict[str, Any]]): Additional context passed from the API
+
+        Yields:
+            SSEChunk: Server-Sent Events chunks containing response content or status updates
+
+        States:
+            - STREAMING: Generating response content
+            - TOOL_DETECTION: Detecting tool calls in the response
+            - EXECUTING_TOOLS: Running detected tools
+            - INTERMEDIATE: Handling intermediate steps
+            - COMPLETING: Finalizing the response
+        """
         self.logger.debug("Starting streaming agent processing")
 
         context = await self._initialize_context(conversation_history, api_passed_context)
@@ -142,7 +187,20 @@ class StreamingChatAgent:
 
     @handle_streaming_errors
     async def _handle_streaming(self, context: StreamContext) -> AsyncGenerator[SSEChunk, None]:
-        # Increment the streaming state counter and check if the maximum has been reached.
+        """Handle the streaming state of the conversation.
+
+        Processes the main content generation phase, monitoring for tool calls and
+        managing the response stream.
+
+        Args:
+            context (StreamContext): Current streaming context
+
+        Yields:
+            SSEChunk: Content chunks and status updates
+
+        Raises:
+            Exception: If maximum streaming iterations are exceeded
+        """
         context.streaming_entry_count += 1
         if context.streaming_entry_count > context.max_streaming_iterations:
             self.logger.error("Maximum streaming iterations reached. Aborting further streaming.")
@@ -210,6 +268,16 @@ class StreamingChatAgent:
 
     @handle_streaming_errors
     async def _handle_tool_detection(self, context: StreamContext) -> AsyncGenerator[SSEChunk, None]:
+        """Handle the tool detection state.
+
+        Processes detected tool calls and transitions to tool execution.
+
+        Args:
+            context (StreamContext): Current streaming context
+
+        Yields:
+            SSEChunk: Tool detection status updates
+        """
         self.logger.debug("Tool calls detected, transitioning to EXECUTING_TOOLS")
         context.current_state = StreamState.EXECUTING_TOOLS
         yield await SSEChunk.make_status_chunk(
@@ -222,8 +290,16 @@ class StreamingChatAgent:
             self,
             context: StreamContext
     ) -> AsyncGenerator[SSEChunk, None]:
-        """
-        Execute the detected tools, produce results, and transition to INTERMEDIATE.
+        """Execute detected tools and process their results.
+
+        Runs the detected tools concurrently and handles their results, including
+        error cases.
+
+        Args:
+            context (StreamContext): Current streaming context
+
+        Yields:
+            SSEChunk: Tool execution status updates
         """
         if context.message_buffer.strip():
             context.conversation_history.append(
@@ -260,6 +336,16 @@ class StreamingChatAgent:
 
     @handle_streaming_errors
     async def _handle_intermediate(self, context: StreamContext) -> AsyncGenerator[SSEChunk, None]:
+        """Handle the intermediate state between tool executions.
+
+        Resets the message buffer and detection strategy for the next iteration.
+
+        Args:
+            context (StreamContext): Current streaming context
+
+        Yields:
+            SSEChunk: Status updates for continuation
+        """
         context.message_buffer = ""
         self.detection_strategy.reset()
         context.current_state = StreamState.STREAMING
@@ -267,6 +353,16 @@ class StreamingChatAgent:
 
     @handle_streaming_errors
     async def _handle_completing(self, context: StreamContext) -> AsyncGenerator[SSEChunk, None]:
+        """Handle the completion state of the conversation.
+
+        Finalizes the conversation and sends the stop signal.
+
+        Args:
+            context (StreamContext): Current streaming context
+
+        Yields:
+            SSEChunk: Final stop chunk
+        """
         self.logger.info(f"--- Entering COMPLETING State ---")
 
         yield await SSEChunk.make_stop_chunk()
@@ -281,6 +377,18 @@ class StreamingChatAgent:
             conversation_history: List[TextChatMessage],
             api_passed_context: Optional[Dict]
     ) -> StreamContext:
+        """Initialize the streaming context for a new conversation step.
+
+        Sets up the conversation history with system prompt and creates the
+        streaming context with necessary configurations.
+
+        Args:
+            conversation_history (List[TextChatMessage]): Previous conversation messages
+            api_passed_context (Optional[Dict]): Additional context from the API
+
+        Returns:
+            StreamContext: Initialized streaming context
+        """
         selected_history = (
             conversation_history[-self.history_limit:]
             if self.history_limit > 0
@@ -307,6 +415,18 @@ class StreamingChatAgent:
             result: DetectionResult,
             accumulated_content: List[str]
     ) -> AsyncGenerator[SSEChunk, None]:
+        """Handle a complete tool call match detection.
+
+        Process detected tool calls and update the conversation history.
+
+        Args:
+            context (StreamContext): Current streaming context
+            result (DetectionResult): Tool detection result
+            accumulated_content (List[str]): Accumulated response content
+
+        Yields:
+            SSEChunk: Content chunks and updates
+        """
         if result.content:
             accumulated_content.append(result.content)
             yield SSEChunk.make_text_chunk(result.content)
@@ -319,6 +439,19 @@ class StreamingChatAgent:
         context.current_state = StreamState.TOOL_DETECTION
 
     async def _execute_tools_concurrently(self, context: StreamContext) -> List[Any]:
+        """Execute multiple tools concurrently.
+
+        Run detected tools in parallel and handle their results or errors.
+
+        Args:
+            context (StreamContext): Current streaming context
+
+        Returns:
+            List[Any]: List of tool execution results or exceptions
+
+        Raises:
+            RuntimeError: If a requested tool is not found
+        """
         async def run_tool(tool_call: ToolCall):
             try:
                 tool = self.tool_registry.get_tool(tool_call.function.name)
@@ -326,7 +459,7 @@ class StreamingChatAgent:
                     raise RuntimeError(f"Tool {tool_call.function.name} not found")
 
                 result = await tool.execute(
-                    context=context.context,
+                    context=context,
                     **tool_call.function.arguments
                 )
                 return {"tool_name": tool_call.function.name, "result": result.result}

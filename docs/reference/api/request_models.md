@@ -1,6 +1,6 @@
-# Tools
+### Request Models
 
-::: src.data_models.tools.FunctionParameters
+::: src.api.request_models.ChatCompletionRequest
     options:
         show_root_heading: true
         show_source: true
@@ -8,7 +8,7 @@
 
 ---
 
-::: src.data_models.tools.Function
+::: src.api.request_models.ContextValue
     options:
         show_root_heading: true
         show_source: true
@@ -16,15 +16,7 @@
 
 ---
 
-::: src.data_models.tools.Tool
-    options:
-        show_root_heading: true
-        show_source: true
-        heading_level: 1
-
----
-
-::: src.data_models.tools.ToolsList
+::: src.api.request_models.ContextModel
     options:
         show_root_heading: true
         show_source: true

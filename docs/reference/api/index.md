@@ -33,7 +33,7 @@ The SSE (Server-Sent Events) models handle streaming responses from the system. 
 
 For detailed information about specific components, see:
 
-- [Chat Completions API](chat_completions_api.md) - Details about the chat endpoints
+- [API Request Models](request_models.md) - Details about the chat endpoint models
 - [SSE Models](sse_models.md) - Information about streaming response models
 
 ## See Also

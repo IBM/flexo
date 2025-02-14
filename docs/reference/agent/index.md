@@ -37,14 +37,14 @@ stateDiagram-v2
 The agent supports two detection modes:
 
 1. **Vendor Detection** (Default)
-   - Uses LLM provider's native function calling
-   - Only works with vendor-supported models
-   - Automatic format handling
+     - Uses LLM provider's native function calling
+     - Only works with vendor-supported models
+     - Automatic format handling
 
 2. **Manual Detection**
-   - Custom parser-based detection
-   - More flexible for custom formats
-   - Configurable parsing rules
+     - Custom parser-based detection
+     - More flexible for custom formats
+     - Configurable parsing rules
 
 ### Concurrent Tool Execution
 
@@ -60,21 +60,7 @@ The agent supports two detection modes:
 
 ## Configuration
 
-The agent is configured through a YAML file with the following key sections:
-
-```yaml
-history_limit: 3  # Number of messages to include in context
-system_prompt: "..."  # System instruction for the LLM
-detection_mode: "vendor"  # Tool detection strategy (vendor/manual)
-use_vendor_chat_completions: true # Use vendor's chat completions API instead of text generation
-max_tool_iterations: 3  # Maximum tool execution depth
-models_config:  # LLM configuration
-  main_chat_model:
-    vendor: "..."
-    # Additional model settings
-tools_config:  # Tool definitions and settings
-  # Tool-specific configurations
-```
+The agent is configured through a YAML file. Please see [Agent Configuration](../../agent-configuration.md) for details.
 
 ## Usage
 
@@ -118,5 +104,5 @@ The module implements comprehensive error handling through:
 ## See Also
 
 - [Streaming Chat Agent Documentation](chat_agent_streaming.md)
-- [Chat Completions API](../api/chat_completions_api.md)
+- [Chat Completions API](../api/request_models.md)
 - [Tool Registry](../tools/tool_registry.md)

@@ -13,6 +13,7 @@ from asyncio import Lock, sleep
 from typing import Optional, Dict, Any, Union, List
 
 from src.tools.core.base_tool import BaseTool
+from src.data_models.agent import StreamContext
 from src.tools.core.utils.token_manager import OAuth2ClientCredentialsManager
 
 load_dotenv()
@@ -279,7 +280,7 @@ class BaseRESTTool(BaseTool):
                 return {"error": f"Unexpected error: {str(e)}"}
 
     @abstractmethod
-    async def execute(self, **kwargs):
+    async def execute(self, context: Optional[StreamContext] = None, **kwargs):
         """Execute the tool's main functionality."""
         pass
 

@@ -29,7 +29,6 @@ from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from src.agent import StreamingChatAgent
 from src.api.request_models import ChatCompletionRequest
 from src.data_models.chat_completions import (
-    ConversationInput,
     TextChatMessage,
     UserMessage,
     UserTextContent
@@ -152,14 +151,11 @@ async def chat_completions(
     """
     try:
         logger.debug(f"Processing chat completion request with {len(request_body.messages)} messages")
-
-        # Prepare conversation input
-        conversation_input = ConversationInput(messages=request_body.messages)
-        conversation_input.messages = convert_message_content(conversation_input.messages)
+        processed_messages = convert_message_content(request_body.messages)
 
         logger.debug("Initiating streaming response")
         response_stream = agent.stream_step(
-            conversation_history=conversation_input.messages,
+            conversation_history=processed_messages,
             api_passed_context=request_body.context.model_dump() if request_body.context else None
         )
 

@@ -35,11 +35,11 @@ nav:
       - Streaming Chat Agent: reference/agent/chat_agent_streaming.md
     - API:
       - Overview: reference/api/index.md
-      - Chat Completions API: reference/api/chat_completions_api.md
       - SSE Models: reference/api/sse_models.md
+      - Request Models: reference/api/request_models.md
     - Data Models:
       - Overview: reference/data_models/index.md
-      - Agent Models: reference/data_models/chat_agent_streaming.md
+      - Agent Models: reference/data_models/agent.md
       - Chat Completion Models: reference/data_models/chat_completions.md
       - Streaming Models: reference/data_models/streaming.md
       - Tool Models: reference/data_models/tools.md
@@ -115,6 +115,7 @@ plugins:
             show_source: true
             show_root_heading: true
             heading_level: 2
+            docstring_style: google
 
 markdown_extensions:
   - pymdownx.superfences:
