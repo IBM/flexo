@@ -1,5 +1,6 @@
 # src/agent/chat_streaming_agent.py
 
+import os
 import json
 import yaml
 import asyncio
@@ -84,7 +85,7 @@ class StreamingChatAgent:
 
         # Initialize logger
         self.logger = logging.getLogger(self.__class__.__name__)
-        logging_level = self.config.get('logging_level', 'INFO')
+        logging_level = os.getenv("LOG_LEVEL", "INFO")
         logging.basicConfig(level=getattr(logging, logging_level.upper(), None))
         self.logger.info(f'Logger set to {logging_level}')
 

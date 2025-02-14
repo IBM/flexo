@@ -6,71 +6,62 @@ from src.tools.core.parsers.base_tool_call_parser import BaseToolCallParser
 
 
 class JSONToolCallParser(BaseToolCallParser):
-    """Parser for extracting JSON-formatted tool calls from text.
+    """Parser for extracting and processing JSON tool calls from raw text.
 
-    This parser specializes in finding and parsing JSON objects or arrays
-    that represent tool calls within text content.
-
-    Example:
-        ```python
-        parser = JSONToolCallParser({"clean_tokens": []})
-        result = parser.parse('{"name": "my_tool", "arguments": {"arg1": "value"}}')
-        ```
+    This parser detects JSON structures embedded in text, extracts them,
+    and parses them using `json5`. It also ensures that any nested JSON
+    values stored as strings are properly converted into JSON objects.
     """
     def extract(self, text: str) -> Dict[str, Any]:
-        """Extract and parse JSON tool calls from text.
+        """Extract and parse JSON tool calls from the input text.
 
-        Finds potential JSON content using delimiter matching and attempts
-        to parse valid JSON tool calls.
+        This method scans the text for JSON segments, attempts to parse them,
+        and recursively converts any nested JSON stored as string values.
 
         Args:
-            text (str): Cleaned input text containing JSON tool calls.
+            text (str): The input text containing JSON tool calls.
 
         Returns:
-            Dict[str, Any]: Parsed tool calls or error information.
+            Dict[str, Any]: A dictionary containing parsed tool calls or error information.
 
-                - Success format: {"tool_calls": [{"name": "...", "arguments": {...}}, ...]}
-                - Error format: {"error": "error message"}
+            - Success format: `{"tool_calls": [{"name": "...", "arguments": {...}}, ...]}`
+            - Error format: `{"error": "error message"}`
         """
         try:
-            # Find potential JSON strings using balanced delimiter matching
             json_strings = self.find_json_content(text)
             valid_calls = []
-
-            # Try to parse each potential JSON string
             for json_str in json_strings:
                 try:
                     parsed = json5.loads(json_str)
-                    # Handle both single objects and arrays
+                    parsed = self.parse_nested_json(parsed)
                     if isinstance(parsed, dict):
                         valid_calls.append(parsed)
                     elif isinstance(parsed, list):
                         valid_calls.extend(parsed)
-                except ValueError:
+                except Exception:
                     continue
 
             return {"tool_calls": valid_calls} if valid_calls else {"error": "No valid tool calls found"}
-
         except Exception as e:
             return {"error": f"Unexpected error: {str(e)}"}
 
     @staticmethod
     def find_json_content(text: str) -> List[str]:
-        """Find potential JSON content using balanced delimiter matching.
+        """Extract potential JSON content from raw text using balanced delimiter matching.
 
-        Uses a state machine approach to find balanced JSON objects or arrays
-        within the text.
+        This method scans the text character by character to identify and extract
+        valid JSON objects or arrays. It ensures that nested structures are handled
+        correctly, but does not account for JSON within quoted strings.
 
         Args:
-            text (str): Input text to search for JSON content.
+            text (str): The raw text to search for JSON content.
 
         Returns:
-            List[str]: List of potential JSON strings found in the text.
+            List[str]: A list of extracted JSON string segments.
         """
         results = []
         start = None
         depth = 0
-
         for i, char in enumerate(text):
             if char in '{[' and depth == 0:
                 start = i
@@ -82,5 +73,34 @@ class JSONToolCallParser(BaseToolCallParser):
                 if depth == 0 and start is not None:
                     results.append(text[start:i + 1])
                     start = None
-
         return results
+
+    def parse_nested_json(self, value):
+        """Recursively parses stringified JSON within a JSON structure.
+
+        If a value is a string that appears to be JSON (i.e., it starts with `{` or `[`),
+        this method attempts to parse it. It then recursively processes the newly parsed
+        object to handle any further nested JSON values.
+
+        Args:
+            value (Any): The input value to check and potentially parse.
+
+        Returns:
+            Any: The processed value, either as a parsed JSON object or as its original type.
+        """
+        if isinstance(value, str):
+            trimmed = value.strip()
+            if trimmed and trimmed[0] in ['{', '[']:
+                try:
+                    parsed = json5.loads(trimmed)
+                    return self.parse_nested_json(parsed)
+                except Exception:
+                    return value
+            else:
+                return value
+        elif isinstance(value, dict):
+            return {k: self.parse_nested_json(v) for k, v in value.items()}
+        elif isinstance(value, list):
+            return [self.parse_nested_json(item) for item in value]
+        else:
+            return value
