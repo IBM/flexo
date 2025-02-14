@@ -37,7 +37,7 @@ This guide will help you set up and run the generative AI agent project.
 
 4. Start the API server:
    ```bash
-   uvicorn main:app --reload --host 127.0.0.1 --port 8000 --workers 4
+   uvicorn src.main:app --reload --host 127.0.0.1 --port 8000
    ```
 
 5. Test the API using one of these methods:
@@ -65,7 +65,7 @@ This guide will help you set up and run the generative AI agent project.
            }'
    ```
 
-   B. Using the Streamlit interface:
+   B. Using the Streamlit testing interface:
    ```bash
    # Navigate to the tests directory
    cd tests

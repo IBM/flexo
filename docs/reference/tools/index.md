@@ -6,6 +6,7 @@ The Tools component provides a powerful and extensible framework for implementin
 
 ---
 
+
 ```mermaid
 graph TB
     A[Client Request] --> B[Tool Registry]
@@ -32,7 +33,7 @@ graph TB
 
 ## 🏗️ Component Architecture
 
-### Tool Execution Flow
+### Tool Execution Flow (API Tool Example)
 
 ```mermaid
 sequenceDiagram
@@ -53,6 +54,8 @@ sequenceDiagram
 ## 🧱 Core Components
 
 ### Base Tool Interfaces
+Located in `src/tools/core/`:
+
 - **📘 BaseTool**
     - Foundation interface for all tools
     - Defines standard execution patterns
@@ -70,6 +73,7 @@ sequenceDiagram
 
 
 ### 🛠️ Example Tool [Implementations](implementations/index.md)
+Located in `src/tools/implementations/`:
 
 - **🔍 RAGTool**
     - Retrieval-Augmented Generation
@@ -88,7 +92,7 @@ sequenceDiagram
 
 
 ### ⚙️ Utils
-Located in `utils/`:
+Located in `src/tools/core/utils/`:
 
 - **🔑 TokenManager**
     - OAuth2 credential management
@@ -97,7 +101,7 @@ Located in `utils/`:
 
 
 ### 📝 Parsers
-Located in `parsers/`:
+Located in `src/tools/core/parsers/`:
 
 - **📊 BaseToolCallParser**
     - Abstract parsing interface
