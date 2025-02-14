@@ -13,7 +13,6 @@ name: flexo
 history_limit: 4
 timeouts:
   model_response_timeout: 60
-logging_level: INFO
 max_streaming_iterations: 2
 detection_mode: vendor
 use_vendor_chat_completions: true
