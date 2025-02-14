@@ -38,86 +38,88 @@ graph TB
 sequenceDiagram
     participant C as Client
     participant R as ToolRegistry
-    participant P as Parser
     participant T as Tool
     participant E as External Service
 
     C->>R: Execute Tool Request
-    R->>P: Parse Tool Call
-    P-->>R: Parsed Parameters
     R->>T: Execute Tool
     T->>E: API Request
     E-->>T: Response
-    T-->>R: Processed Result
-    R-->>C: Final Response
+    T-->>C: Processed Result
 ```
 
 ---
 
 ## 🧱 Core Components
 
-### Base Tools
+### Base Tool Interfaces
 - **📘 BaseTool**
-  - Foundation interface for all tools
-  - Defines standard execution patterns
-  - Located in `base_tool.md`
+    - Foundation interface for all tools
+    - Defines standard execution patterns
+    - See [Base Tool](base_tool.md)
 
 - **🌐 BaseRESTTool**
-  - Extended functionality for REST APIs
-  - Built-in HTTP method handling
-  - Located in `base_rest_tool.md`
+    - Extended functionality for REST APIs
+    - Built-in HTTP method handling
+    - See [Base Rest Tool](base_rest_tool.md)
 
 - **📋 ToolRegistry**
-  - Central tool management system
-  - Handles tool registration and access
-  - Located in `tool_registry.md`
+    - Central tool management system
+    - Handles tool registration and access
+    - See [Tool Registry](tool_registry.md)
 
 
-### 🛠️ Tool Implementations
-Located in `implementations/`:
+### 🛠️ Example Tool [Implementations](implementations/index.md)
 
 - **🔍 RAGTool**
-  - Retrieval-Augmented Generation
-  - Enhances responses with external knowledge
-  - Located in `rag_tool.md`
+    - Retrieval-Augmented Generation
+    - Enhances responses with external knowledge
+    - See [Rag Tool Example](implementations/rag_tool.md)
 
 - **🌤️ WeatherTool**
-  - Weather information service integration
-  - Real-time weather data access
-  - Located in `weather_tool.md`
+    - Weather information service integration
+    - Real-time weather data access
+    - See [Weather Tool Example](implementations/weather_tool.md)
 
-### 📝 Parsers
-Located in `parsers/`:
+- **📚 WikipediaTool**
+    - Wikipedia article retrieval and summarization
+    - Access to comprehensive knowledge base
+    - See [Wikipedia Tool Example](implementations/wikipedia_tool.md)
 
-- **📊 BaseToolCallParser**
-  - Abstract parsing interface
-  - Located in `base_tool_call_parser.md`
-
-- **📋 JSONToolCallParser**
-  - JSON format handling
-  - Located in `json_tool_call_parser.md`
-
-- **📜 NonJSONToolCallParser**
-  - Alternative format support
-  - Located in `non_json_tool_call_parser.md`
 
 ### ⚙️ Utils
 Located in `utils/`:
 
 - **🔑 TokenManager**
-  - OAuth2 credential management
-  - Secure token handling
-  - Located in `token_manager.md`
+    - OAuth2 credential management
+    - Secure token handling
+    - See [Token Manager](utils/token_manager.md)
+
+
+### 📝 Parsers
+Located in `parsers/`:
+
+- **📊 BaseToolCallParser**
+    - Abstract parsing interface
+    - See [Base Parser](parsers/base_tool_call_parser.md)
+
+- **📋 JSONToolCallParser**
+    - JSON format handling
+    - See [JSON Parser](parsers/json_tool_call_parser.md)
+
+- **📜 NonJSONToolCallParser**
+    - Alternative format support
+    - See [Non-JSON Parser](parsers/non_json_tool_call_parser.md)
 
 ---
 
 ## 📚 Further Documentation
 
-- 📖 See [base_tool](base_tool.md) for custom tool creation
-- 🌐 See [base_rest_tool](base_rest_tool.md) for REST implementation details
-- 🛠️ Check [implementations](implementations/index.md) for specific tool documentation
-- 📝 Visit [parsers](parsers/index.md) for parsing documentation
-- ⚙️ Explore [utils](utils/index.md) for utility references
+- 📖 See [Base Tool](base_tool.md) for custom tool creation
+- 🌐 See [Base REST Tool](base_rest_tool.md) for REST implementation details
+- 🛠️ Check [Tool Implementations](implementations/index.md) for specific tool documentation
+- 📝 Visit [Parsers](parsers/index.md) for parsing documentation
+- ⚙️ Explore [Utils](utils/index.md) for utility references
 
 ---
 

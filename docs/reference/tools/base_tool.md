@@ -1,4 +1,4 @@
-::: src.tools.base_tool.BaseTool
+::: src.tools.core.base_tool.BaseTool
     options:
         show_root_heading: true
         show_source: true
