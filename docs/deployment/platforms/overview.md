@@ -7,6 +7,7 @@ Flexo can be deployed to various cloud platforms and container orchestration ser
 ## Platforms
 
 ### Links to docs
+
 - [Deploy to Code Engine](code-engine.md)
 - [Deploy to AWS Fargate](fargate.md)
 - [Deploy to OpenShift](openshift.md)
@@ -28,6 +29,7 @@ Flexo can be deployed to various cloud platforms and container orchestration ser
 ## Deployment Considerations
 
 ### Resource Requirements
+
 - Recommended Minimum Memory: 6GB
 - Recommended Minimum CPU: 2 vCPU
 - Storage: Based on usage
@@ -36,6 +38,7 @@ Note: Number of uvicorn workers can be set using `UVICORN_WORKERS`. The default 
 
 ### Configuration Management
 Each platform provides different methods for:
+
 - Environment variables
 - Secret management
 - Volume mounts
@@ -43,6 +46,7 @@ Each platform provides different methods for:
 
 ### Monitoring and Logging
 Consider platform-specific solutions for:
+
 - Health monitoring
 - Log aggregation
 - Performance metrics

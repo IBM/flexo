@@ -26,11 +26,13 @@ The **Pattern Detection Module** provides utilities for detecting predefined pat
 The module processes text in two primary stages:
 
 1. **Pattern Preprocessing**
+
      - Patterns are loaded from YAML configuration
      - The Aho-Corasick automaton is constructed from patterns
      - Failure links connect states for efficient pattern transitions
 
 2. **Buffered Text Processing**
+
      - Text is processed in manageable chunks
      - Partial matches at chunk boundaries are preserved
      - Match information includes pattern name and position
@@ -84,5 +86,6 @@ print(f"Pattern found: {result.pattern_name}" if result.matched else "No match")
 ---
 
 ## Additional Resources
+
 * [LLM Module Overview](../index.md)
 * [Tool Call Detection](../tool_detection/index.md)

@@ -7,9 +7,11 @@ The **Prompt Builders** module provides utilities for constructing prompts tailo
 ## Components
 
 ### Base Prompt Builder
+
 - `BasePromptBuilder`: The foundational class that all other prompt builders extend.
 
 ### Provider-Specific Prompt Builders
+
 - `AnthropicPromptBuilder`: Generates prompts formatted for **Anthropic's Claude** models.
 - `MistralAIPromptBuilder`: Constructs prompts for **Mistral AI** models.
 - `OpenAIPromptBuilder`: Handles prompt generation for **OpenAI's GPT models**.
@@ -19,6 +21,7 @@ The **Prompt Builders** module provides utilities for constructing prompts tailo
 - `XAIPromptBuilder`: Specialized for **xAI** models.
 
 ### Prompt Models
+
 - `PromptPayload`: Defines the structure of the prompt content.
 - `PromptBuilderOutput`: Represents the formatted output of a prompt builder.
 

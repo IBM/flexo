@@ -37,11 +37,13 @@ stateDiagram-v2
 The agent supports two detection modes:
 
 1. **Vendor Detection** (Default)
+
      - Uses LLM provider's native function calling
      - Only works with vendor-supported models
      - Automatic format handling
 
 2. **Manual Detection**
+
      - Custom parser-based detection
      - More flexible for custom formats
      - Configurable parsing rules

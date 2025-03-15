@@ -68,6 +68,7 @@ password: pass   # optional
 ### Elasticsearch Configuration
 
 Required environment variables:
+
 - `ES_ENDPOINT`: Elasticsearch server endpoint
 - `ES_API_KEY`: API key for authentication
 

@@ -19,6 +19,7 @@ use_vendor_chat_completions: true
 ```
 
 ### Key Configurations:
+
 - **`detection_mode`**: Supports `'vendor'` or `'manual'` tool call detection (corresponds to `VendorToolCallDetectionStrategy` or `ManualToolCallDetectionStrategy`).
 - **`use_vendor_chat_completions`**: Enables the use of the chat completions API instead of the text generation endpoint.
 - **`history_limit`**: Controls the conversation context window by limiting the number of previous messages retained.

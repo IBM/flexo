@@ -3,6 +3,7 @@
 This guide covers using Docker Hub for storing and distributing your Flexo container images.
 
 ## Prerequisites
+
 - Docker Hub account
 - Docker installed locally
 - (Optional) Docker Hub Team/Pro subscription for private repositories
@@ -43,6 +44,7 @@ docker pull <username>/flexo:latest
 ```
 
 ## Best Practices
+
 - Use specific tags for versioning
 - Set up automated builds
 - Implement security scanning
@@ -50,15 +52,18 @@ docker pull <username>/flexo:latest
 - Consider rate limiting implications
 
 ## Cost Considerations
+
 - Free tier limitations
 - Private repository pricing
 - Pull rate limits
 
 ## Troubleshooting
+
 - **Rate Limits**: Check pull limits and consider authentication
 - **Push Errors**: Verify repository permissions
 - **Authentication**: Check token expiration and scope
 
 ## Next Steps
+
 - [Deploy to Kubernetes](../platforms/kubernetes.md)
 - [Mount Configurations](../../configuration/mounting.md)

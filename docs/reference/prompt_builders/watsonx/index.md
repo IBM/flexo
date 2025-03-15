@@ -7,6 +7,7 @@ The **WatsonX Prompt Builders** module provides specialized utilities for constr
 ## Components
 
 ### Model-Specific Prompt Builders
+
 - `GranitePromptBuilder`: Designed for **WatsonX Granite** models, ensuring optimal prompt structuring.
 - `LlamaPromptBuilder`: Tailored for **WatsonX Llama** models, adhering to their input format requirements.
 - `MistralPromptBuilder`: Specialized for **WatsonX Mistral** models, enhancing compatibility and performance.

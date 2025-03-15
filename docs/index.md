@@ -14,6 +14,7 @@ The [**Flexo Agent Library**](https://github.com/IBM/flexo) is a powerful and fl
 ---
 
 ## Key Features
+
 - **Configurable Agent**: YAML-based configuration for custom behaviors
 - **Tool Integration**: Execute Python functions and REST API calls
 - **Streaming Support**: Real-time streaming with pattern detection
@@ -170,10 +171,12 @@ Deploy Flexo to your preferred platform:
 ## Documentation
 
 ### Deployment Guides
+
 - [Container Registries](deployment/registries/overview.md)
 - [Platform Deployment](deployment/platforms/overview.md)
 
 ### Code Reference
+
 - [Agent](reference/agent/chat_agent_streaming)
 - [API Reference](reference/api.md)
 - [Model Configuration](model-configuration.md)

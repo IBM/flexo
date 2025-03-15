@@ -3,6 +3,7 @@
 This guide walks through deploying Flexo to AWS Fargate, a serverless container platform that integrates with Amazon ECS (Elastic Container Service).
 
 ## Prerequisites
+
 - AWS account with appropriate permissions
 - AWS CLI installed and configured
 - Container image in Amazon ECR or other accessible registry
@@ -172,6 +173,7 @@ aws ecs describe-services \
 ```
 
 ## Possible Next Steps
+
 - Set up Application Load Balancer
 - Configure CloudWatch alarms
 - Set up CI/CD pipeline with AWS CodePipeline

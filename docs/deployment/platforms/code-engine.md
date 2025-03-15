@@ -3,6 +3,7 @@
 This guide walks through deploying Flexo to IBM Code Engine, a fully managed serverless platform.
 
 ## Prerequisites
+
 - IBM Cloud account with Code Engine permissions
 - IBM Cloud CLI with Code Engine plugin
 - Container image in a registry (ICR or Docker Hub)
@@ -121,6 +122,7 @@ ibmcloud ce application get --name flexo
 ```
 
 ### Environment Variable Access
+
 - Values from both secrets and configmaps are loaded as environment variables
 - Access in your code using `os.getenv()`:
   ```python

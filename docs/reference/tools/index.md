@@ -55,16 +55,19 @@ sequenceDiagram
 Located in `src/tools/core/`:
 
 - **BaseTool**
+
     - Foundation interface for all tools
     - Defines standard execution patterns
     - See [Base Tool](core/base_tool.md)
 
 - **BaseRESTTool**
+
     - Extended functionality for REST APIs
     - Built-in HTTP method handling
     - See [Base Rest Tool](core/base_rest_tool.md)
 
 - **ToolRegistry**
+
     - Central tool management system
     - Handles tool registration and access
     - See [Tool Registry](core/tool_registry.md)
@@ -74,16 +77,19 @@ Located in `src/tools/core/`:
 Located in `src/tools/implementations/`:
 
 - **RAGTool**
+
     - Retrieval-Augmented Generation
     - Enhances responses with external knowledge
     - See [Rag Tool Example](implementations/rag_tool.md)
 
 - **WeatherTool**
+
     - Weather information service integration
     - Real-time weather data access
     - See [Weather Tool Example](implementations/weather_tool.md)
 
 - **WikipediaTool**
+
     - Wikipedia article retrieval and summarization
     - Access to comprehensive knowledge base
     - See [Wikipedia Tool Example](implementations/wikipedia_tool.md)
@@ -93,6 +99,7 @@ Located in `src/tools/implementations/`:
 Located in `src/tools/core/utils/`:
 
 - **TokenManager**
+
     - OAuth2 credential management
     - Secure token handling
     - See [Token Manager](core/utils/token_manager.md)
@@ -102,14 +109,17 @@ Located in `src/tools/core/utils/`:
 Located in `src/tools/core/parsers/`:
 
 - **BaseToolCallParser**
+
     - Abstract parsing interface
     - See [Base Parser](core/parsers/base_tool_call_parser.md)
 
 - **JSONToolCallParser**
+
     - JSON format handling
     - See [JSON Parser](core/parsers/json_tool_call_parser.md)
 
 - **NonJSONToolCallParser**
+
     - Alternative format support
     - See [Non-JSON Parser](core/parsers/non_json_tool_call_parser.md)
 

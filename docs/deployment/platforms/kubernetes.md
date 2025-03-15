@@ -3,6 +3,7 @@
 This guide covers deploying Flexo to a generic Kubernetes cluster.
 
 ## Prerequisites
+
 - Access to Kubernetes cluster
 - kubectl CLI installed and configured
 - Container image in accessible registry

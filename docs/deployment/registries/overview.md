@@ -8,6 +8,7 @@ After building your Flexo image, you'll need to push it to a container registry.
 
 ## IBM Container Registry
 Best for IBM Cloud deployments:
+
 - Native integration with IBM Cloud
 - Built-in vulnerability scanning
 - Regional endpoints for faster pulls
@@ -16,6 +17,7 @@ Best for IBM Cloud deployments:
 
 ## Docker Hub
 Universal option for all platforms:
+
 - Widely supported
 - Free public repositories
 - Simple authentication
@@ -58,6 +60,7 @@ Universal option for all platforms:
 ---
 
 ## Next Steps
+
 - [IBM Registry Setup](ibm-registry.md)
 - [Docker Hub Setup](dockerhub.md)
 - [Platform Deployment](../platforms/overview.md)

@@ -3,6 +3,7 @@
 This guide walks through the process of building a Docker image for Flexo.
 
 ## Prerequisites
+
 - Docker installed (20.10.0 or higher)
 - Git clone of Flexo repository
 - (Optional) Podman 3.0+ as Docker alternative
@@ -66,6 +67,7 @@ curl http://localhost:8000/health
 ## Troubleshooting
 
 Common issues and solutions:
+
 - **Build fails**: Check Docker daemon status and Dockerfile syntax
 - **Platform errors**: Verify buildx setup for your target platform
 - **Size issues**: Use .dockerignore to exclude unnecessary files

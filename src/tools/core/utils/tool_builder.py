@@ -1,7 +1,7 @@
 # src/tools/core/utils/tool_builder.py
 
-import logging
 import importlib
+import logging
 from typing import Dict, Type, Optional
 
 from src.tools.core.base_tool import BaseTool
@@ -17,6 +17,7 @@ def create_tool_from_config(
     Create and return an instance of a tool based on its configuration.
 
     Supports two modes:
+
     1. Custom tools: Directly instantiate by name from discovered tools
     2. Config-based tools: Create based on base_tool + configuration
 

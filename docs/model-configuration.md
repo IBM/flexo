@@ -29,6 +29,7 @@ models:
 ```
 
 Each model entry consists of:
+
 - A unique `model_name` which will be referenced in your agent configuration
 - A `vendor` identifier that determines which adapter to use
 - A `model_id` that specifies the actual model to use from the vendor

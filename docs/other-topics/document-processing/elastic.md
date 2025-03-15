@@ -1,6 +1,7 @@
 # Installing and Configuring Elasticsearch with Custom Models
 
 ## Prerequisites
+
 - Python 3.7+ to 3.11
 - pip package manager
 - Access to an Elasticsearch instance

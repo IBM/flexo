@@ -88,24 +88,28 @@ graph TD
 ## Key Features
 
 ### LLM Provider Support
+
 - Vendor-agnostic interface
 - Provider-specific prompt builders
 - Auth Token management
 - Error handling and retry logic
 
 ### Tool Framework
+
 - Base classes for rapid tool development
 - REST integration support
 - Parser framework for response handling
 - Registry for tool management
 
 ### Pattern Detection
+
 - Real-time text pattern matching
 - Aho-Corasick algorithm implementation
 - Buffered processing for streaming
 - Detection strategy framework
 
 ### Database Integration
+
 - Vector storage support
 - Connection pooling
 - Error handling and retries
@@ -164,6 +168,7 @@ graph TD
 ## Quick Reference
 
 ### Common Components
+
 - [Agent](agent/index.md) - Core orchestration
 - [LLM](llm/index.md) - Language model integration
 - [Tools](tools/index.md) - Tool framework
@@ -171,6 +176,7 @@ graph TD
 - [API](api/index.md) - REST endpoints
 
 ### Utility Components
+
 - [Data Models](data_models/index.md) - Shared data structures
 - [Utils](utils/index.md) - Common utilities
 - [Prompt Builders](prompt_builders/index.md) - LLM prompting

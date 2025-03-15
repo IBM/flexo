@@ -3,6 +3,7 @@
 This guide covers deploying Flexo on OpenShift, providing enterprise-grade orchestration and scaling.
 
 ## Prerequisites
+
 - Access to OpenShift cluster
 - OpenShift CLI (oc) installed
 - Container image in accessible registry
@@ -95,6 +96,7 @@ spec:
 ```
 
 ## Security Considerations
+
 - Set up network policies
 - Configure service accounts
 - Use OpenShift secrets management

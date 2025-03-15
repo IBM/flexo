@@ -3,6 +3,7 @@
 This guide will help you set up and run the generative AI agent project.
 
 ## Prerequisites
+
 - Python 3.10+: [Install Python](https://www.python.org/downloads/)
 - Git: [Install Git](https://git-scm.com/)
 - Docker (optional): [Install Docker](https://docs.docker.com/get-docker/)
@@ -32,6 +33,7 @@ This guide will help you set up and run the generative AI agent project.
    ```
 
 3. Configure the project:
+
    - Copy `.env.example` to `.env` and update with your settings
    - Review `src/configs/agent.yaml` for agent configuration
 
@@ -88,11 +90,13 @@ docker run -p 8000:8000 --env-file .env flexo-agent
 ```
 
 ## Next Steps
+
 - Explore configuration options in the [Agent Configuration Guide](agent-configuration.md)
 - Learn about deployment in the [Deployment Guide](deployment/overview.md)
 - Customize the agent's behavior and extend its functionality
 
 ## Testing Tips
+
 - The Streamlit interface provides a more user-friendly way to test the agent's capabilities
 - The Streamlit app is looking for your local agent instance running on port 8000
 - For debugging, check both the API server logs and the Streamlit app logs

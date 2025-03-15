@@ -3,6 +3,7 @@
 This guide details how to use IBM Container Registry (ICR) for storing and managing your Flexo container images.
 
 ## Prerequisites
+
 - IBM Cloud account
 - IBM Cloud CLI installed
 - Container Registry plugin installed (`ibmcloud plugin install container-registry`)
@@ -50,17 +51,19 @@ docker push us.icr.io/<your-namespace>/flexo:latest
 ```
 
 ## Best Practices
+
 - Use meaningful image tags (e.g., version numbers, git hashes)
 - Enable vulnerability scanning
 - Regularly clean up unused images
 - Set up retention policies
 
 ## Troubleshooting
+
 - **Login Issues**: Check IBM Cloud CLI version and authentication
 - **Push Failures**: Verify namespace permissions
 - **Pull Issues**: Check network connectivity and credentials
 
 ## Next Steps
+
 - [Deploy to Code Engine](../platforms/code-engine.md)
 - [Configure Environment Variables](../../configuration/environment.md)
-```
