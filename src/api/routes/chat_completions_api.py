@@ -21,6 +21,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 from fastapi.security.api_key import APIKeyHeader
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 
+from src.api import SSEChunk
 from src.agent import StreamingChatAgent
 from src.api.request_models import ChatCompletionRequest
 from src.data_models.chat_completions import (
@@ -187,8 +188,10 @@ async def chat_completions(
 
                         if any(choice.finish_reason in ["stop", "tool_calls"]
                                for choice in sse_chunk.choices):
+                            yield await SSEChunk.done_marker()
                             logger.debug("Stream completed")
                             return
+
             except Exception as e:
                 logger.error("Error in SSE generator: %s", str(e), exc_info=True)
                 return

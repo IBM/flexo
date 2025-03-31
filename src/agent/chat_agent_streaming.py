@@ -8,7 +8,7 @@ import logging
 from functools import wraps
 from typing import List, AsyncGenerator, Dict, Optional, Any, Callable
 
-from src.api import SSEChunk, AgentStatus
+from src.api import SSEChunk, SSEToolCall
 from src.data_models.agent import StreamState, StreamContext
 from src.data_models.chat_completions import (
     ToolCall,
@@ -38,7 +38,7 @@ def handle_streaming_errors(func: Callable[..., AsyncGenerator[SSEChunk, None]])
                 yield item
         except Exception:
             self.logger.error(f"Error in {func.__name__}", exc_info=True)
-            yield await SSEChunk.make_stop_chunk(
+            yield await SSEChunk.stop_event(
                 content="I apologize - I've encountered an unexpected error. Please try your request again.")
             return
 
@@ -211,7 +211,7 @@ class StreamingChatAgent:
         context.streaming_entry_count += 1
         if context.streaming_entry_count > context.max_streaming_iterations:
             self.logger.error("Maximum streaming iterations reached. Aborting further streaming.")
-            yield await SSEChunk.make_stop_chunk(
+            yield await SSEChunk.stop_event(
                 content="Maximum streaming depth reached. Please try your request again."
             )
             context.current_state = StreamState.COMPLETING
@@ -247,7 +247,7 @@ class StreamingChatAgent:
             if detection_result.state in [DetectionState.NO_MATCH, DetectionState.PARTIAL_MATCH]:
                 if detection_result.content:
                     accumulated_content.append(detection_result.content)
-                    yield SSEChunk.make_text_chunk(detection_result.content)
+                    yield await SSEChunk.assistant_response_event(detection_result.content)
 
             elif detection_result.state == DetectionState.COMPLETE_MATCH:
                 async for chunk in self._handle_complete_match(context, detection_result, accumulated_content):
@@ -263,14 +263,14 @@ class StreamingChatAgent:
         else:
             if final_result.content:
                 accumulated_content.append(final_result.content)
-                yield SSEChunk.make_text_chunk(final_result.content)
+                yield await SSEChunk.assistant_response_event(final_result.content)
 
             if accumulated_content:
                 context.conversation_history.append(
                     AssistantMessage(content="".join(accumulated_content))
                 )
 
-            yield await SSEChunk.make_stop_chunk()
+            yield await SSEChunk.stop_event()
             context.current_state = StreamState.COMPLETING
 
     @handle_streaming_errors
@@ -283,14 +283,22 @@ class StreamingChatAgent:
             context (StreamContext): Current streaming context
 
         Yields:
-            SSEChunk: Tool detection status updates
+            SSEChunk: Tool detection event containing tool call details
         """
         self.logger.debug("Tool calls detected, transitioning to EXECUTING_TOOLS")
         context.current_state = StreamState.EXECUTING_TOOLS
-        yield await SSEChunk.make_status_chunk(
-            AgentStatus.TOOL_DETECTED,
-            {"tools": [tc.format_tool_calls() for tc in context.current_tool_call]}
-        )
+
+        if self.config.get("enable_non_assistant_events", True):
+            sse_tool_calls = [
+                SSEToolCall(
+                    id=tc.id,
+                    name=tc.function.name,
+                    args=json5.loads(tc.function.arguments)
+                )
+                for tc in context.current_tool_call
+            ]
+
+            yield await SSEChunk.tool_call_event(sse_tool_calls, thread_id=None)
 
     @handle_streaming_errors
     async def _handle_tool_execution(
@@ -306,7 +314,7 @@ class StreamingChatAgent:
             context (StreamContext): Current streaming context
 
         Yields:
-            SSEChunk: Tool execution status updates
+            SSEChunk: Tool response events for each tool execution result
         """
         if context.message_buffer.strip():
             context.conversation_history.append(
@@ -316,29 +324,41 @@ class StreamingChatAgent:
 
         results = await self._execute_tools_concurrently(context)
 
-        tool_results = []
+        # Loop through each tool call and its corresponding result.
         for call, result in zip(context.current_tool_call, results):
             context.conversation_history.append(
                 AssistantMessage(tool_calls=[call])
             )
             if isinstance(result, Exception):
+                error_message = f"Error executing tool {call.function.name}: {str(result)}"
                 context.conversation_history.append(
-                    AssistantMessage(
-                        content=f"Error executing tool {call.function.name}: {str(result)}"
-                    )
+                    AssistantMessage(content=error_message)
                 )
+                # Yield a tool response event only if non-assistant events are enabled.
+                if self.config.get("enable_non_assistant_events", True):
+                    yield await SSEChunk.tool_response_event(
+                        response_content=error_message,
+                        tool_name=call.function.name,
+                        tool_call_id=call.id,
+                        thread_id=None  # TODO: pass thread ID if available
+                    )
             else:
-                tool_results.append(result)
                 context.conversation_history.append(
                     ToolMessage(
                         content=result["result"],
                         tool_call_id=call.id
                     )
                 )
+                if self.config.get("enable_non_assistant_events", True):
+                    yield await SSEChunk.tool_response_event(
+                        response_content=result["result"],
+                        tool_name=call.function.name,
+                        tool_call_id=call.id,
+                        thread_id=None  # TODO: pass thread ID if available
+                    )
 
-        self.logger.debug("Tool execution results: %s", tool_results)
+        self.logger.debug("Tool execution results processed.")
         context.current_state = StreamState.INTERMEDIATE
-        yield await SSEChunk.make_status_chunk(AgentStatus.TOOLS_EXECUTED)
 
     @handle_streaming_errors
     async def _handle_intermediate(self, context: StreamContext) -> AsyncGenerator[SSEChunk, None]:
@@ -355,7 +375,8 @@ class StreamingChatAgent:
         context.message_buffer = ""
         self.detection_strategy.reset()
         context.current_state = StreamState.STREAMING
-        yield await SSEChunk.make_status_chunk(AgentStatus.CONTINUING)
+        if False:
+            yield
 
     @handle_streaming_errors
     async def _handle_completing(self, context: StreamContext) -> AsyncGenerator[SSEChunk, None]:
@@ -371,7 +392,7 @@ class StreamingChatAgent:
         """
         self.logger.info(f"--- Entering COMPLETING State ---")
 
-        yield await SSEChunk.make_stop_chunk()
+        yield await SSEChunk.stop_event()
         self.logger.info(f"Streaming process completed.")
 
     # ----------------------------------------------------------------
@@ -435,7 +456,7 @@ class StreamingChatAgent:
         """
         if result.content:
             accumulated_content.append(result.content)
-            yield SSEChunk.make_text_chunk(result.content)
+            yield await SSEChunk.assistant_response_event(result.content)
 
         context.current_tool_call = result.tool_calls or []
         if accumulated_content:

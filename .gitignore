@@ -8,3 +8,4 @@ sandbox.ipynb
 .webui_secret_key
 venv/
 .venv/
+*.webui_secret_key

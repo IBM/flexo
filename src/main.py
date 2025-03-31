@@ -106,7 +106,7 @@ async def generic_exception_handler(request, exc: Exception):
         logger.error("Unhandled exception occurred", exc_info=True)
 
     logger.debug("Generating error response chunk with status %d", status_code)
-    error_response = await SSEChunk.make_stop_chunk(
+    error_response = await SSEChunk.stop_event(
         refusal=error_msg,
         content="I apologize, but an error occurred while processing your request.",
     )
@@ -134,7 +134,7 @@ async def validation_exception_handler(request, exc: RequestValidationError):
     logger.warning("Request validation failed: %s", str(exc))
     logger.debug("Validation error details: %s", exc.errors())
 
-    error_response = await SSEChunk.make_stop_chunk(
+    error_response = await SSEChunk.stop_event(
         refusal=str(exc),
         content="There seems to be an issue with the provided request format. Please check your input and try again.",
     )

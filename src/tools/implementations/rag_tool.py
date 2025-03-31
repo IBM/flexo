@@ -31,8 +31,8 @@ class RAGTool(BaseTool):
         self.strict = True
 
         self.description = ("Tool used to retrieve information from the 'Medicare & You 2025' handbook "
-                            "using natural language search. Use this tool when you need information about "
-                            "Medicare coverage, enrollment, costs, and benefits.")
+                            "using natural language search. **Always** use this tool when you need information about "
+                            "Medicare-related questions.")
 
         self.parameters = {
             'type': 'object',

@@ -1,11 +1,10 @@
-# src/api/sse_models.py
 from __future__ import annotations
 
 import time
 from enum import Enum
-from typing import Dict
-from typing import List, Optional, Any
-from pydantic import BaseModel
+from typing import Dict, List, Optional, Any
+
+from pydantic import BaseModel, Field
 
 
 class AgentStatus(str, Enum):
@@ -14,70 +13,69 @@ class AgentStatus(str, Enum):
     TOOLS_EXECUTED = "tools_executed"
     MAX_DEPTH = "max_depth_reached"
     CONTINUING = "continuing_generation"
-
-
-class SSEStatus(BaseModel):
-    status: AgentStatus
-    details: Optional[Dict[str, Any]] = None
+    THINKING = "thinking"
 
 
 class SSEFunction(BaseModel):
-    """Model for function calls in SSE responses, with support for streaming chunks."""
     name: str = ""
-    arguments: str = ""
+    args: Dict[str, Any] = Field(default_factory=dict)
 
 
 class SSEToolCall(BaseModel):
-    """Model for tool calls in SSE responses."""
-    index: int = 0
-    id: Optional[str] = None
-    type: str = "function"
-    function: Optional[SSEFunction] = None
+    id: str
+    name: str
+    args: Dict[str, Any] = Field(default_factory=dict)
+    index: Optional[int] = None
+
+
+class SSEStepDetails(BaseModel):
+    type: str
+    content: Optional[str] = None
+    tool_calls: Optional[List[SSEToolCall]] = None
+    tool_call_id: Optional[str] = None
+    name: Optional[str] = None
 
 
 class SSEDelta(BaseModel):
-    """Model for delta content in SSE responses."""
     role: Optional[str] = None
     content: Optional[str] = None
-    tool_calls: Optional[List[SSEToolCall]] = None
+    step_details: Optional[SSEStepDetails] = None
     refusal: Optional[str] = None
     status: Optional[str] = None
     metadata: Optional[dict] = None
 
 
 class SSEChoice(BaseModel):
-    """Model for choices in SSE responses."""
-    index: int
+    index: Optional[int] = 0
     delta: SSEDelta
-    logprobs: Optional[dict] = None
     finish_reason: Optional[str] = None
+    logprobs: Optional[dict] = None
 
 
 class SSEChunk(BaseModel):
-    """Model for SSE chunks."""
     id: str
     object: str
     created: int
     model: str
+    thread_id: Optional[str] = None
     service_tier: Optional[str] = None
     system_fingerprint: Optional[str] = None
     choices: List[SSEChoice]
-    thread_id: Optional[str] = None  # this is an IBM wxO thing
 
     @staticmethod
-    def make_text_chunk(text: str) -> 'SSEChunk':
-        """
-        Utility to create a minimal SSEChunk that only has user-visible 'content'.
-        This ensures we never leak partial function-call details back to the user.
-        """
+    async def assistant_response_event(
+            text: str,
+            thread_id: Optional[str] = None,
+            model_name: Optional[str] = "flexo"
+    ) -> SSEChunk:
         return SSEChunk(
-            id=f"chatcmpl-{time.time()}",
-            object="chat.completion.chunk",
+            id=f"run-{time.time_ns() // 1000000:x}",
+            object="thread.message.delta",
             created=int(time.time()),
-            model="agent-01",
+            model=model_name,
+            thread_id=thread_id,
             choices=[
                 SSEChoice(
-                    index=0,
                     delta=SSEDelta(role="assistant", content=text),
                     finish_reason=None
                 )
@@ -85,22 +83,25 @@ class SSEChunk(BaseModel):
         )
 
     @staticmethod
-    async def make_status_chunk(status: str, extra_info: Optional[Dict] = None) -> 'SSEChunk':
-        metadata = {"status": status}
-        if extra_info:
-            metadata.update(extra_info)
-
+    async def thinking_step_event(
+            thinking_text: str,
+            thread_id: Optional[str] = None,
+            model_name: Optional[str] = "flexo"
+    ) -> SSEChunk:
         return SSEChunk(
-            id=f"status_{time.time()}",
-            object="chat.completion.chunk",
+            id=f"step-{time.time_ns() // 1000000:x}",
+            object="thread.run.step.delta",
             created=int(time.time()),
-            model="agent-01",
+            model=model_name,
+            thread_id=thread_id,
             choices=[
                 SSEChoice(
-                    index=0,
                     delta=SSEDelta(
-                        role="system",
-                        metadata=metadata
+                        role="assistant",
+                        step_details=SSEStepDetails(
+                            type="thinking",
+                            content=thinking_text
+                        )
                     ),
                     finish_reason=None
                 )
@@ -108,17 +109,88 @@ class SSEChunk(BaseModel):
         )
 
     @staticmethod
-    async def make_stop_chunk(content=None, refusal=None) -> 'SSEChunk':
+    async def tool_call_event(
+            tool_calls: List[SSEToolCall],
+            thread_id: Optional[str] = None,
+            model_name: Optional[str] = "flexo"
+    ) -> SSEChunk:
         return SSEChunk(
-            id=f"chatcmpl-{time.time()}",
-            object="chat.completion.chunk",
+            id=f"step-{time.time_ns() // 1000000:x}",
+            object="thread.run.step.delta",
             created=int(time.time()),
-            model="agent-01",
+            model=model_name,
+            thread_id=thread_id,
             choices=[
                 SSEChoice(
-                    index=0,
+                    delta=SSEDelta(
+                        role="assistant",
+                        step_details=SSEStepDetails(
+                            type="tool_calls",
+                            tool_calls=tool_calls
+                        )
+                    ),
+                    finish_reason=None
+                )
+            ]
+        )
+
+    @staticmethod
+    async def tool_response_event(
+            response_content: str,
+            tool_name: str,
+            tool_call_id: str,
+            thread_id: Optional[str] = None,
+            model_name: Optional[str] = "flexo"
+    ) -> SSEChunk:
+        return SSEChunk(
+            id=f"step-{time.time_ns() // 1000000:x}",
+            object="thread.run.step.delta",
+            created=int(time.time()),
+            model=model_name,
+            thread_id=thread_id,
+            choices=[
+                SSEChoice(
+                    delta=SSEDelta(
+                        role="assistant",
+                        step_details=SSEStepDetails(
+                            type="tool_response",
+                            content=response_content,
+                            name=tool_name,
+                            tool_call_id=tool_call_id
+                        )
+                    ),
+                    finish_reason=None
+                )
+            ]
+        )
+
+    @staticmethod
+    async def stop_event(
+            thread_id: Optional[str] = None,
+            content: Optional[str] = None,
+            refusal: Optional[str] = None,
+            model_name: str = "agent-02"
+    ) -> SSEChunk:
+        """
+        Create a stop event to indicate the end of a response.
+        """
+        return SSEChunk(
+            id=f"run-{time.time_ns() // 1000000:x}",
+            object="thread.message.delta",
+            created=int(time.time()),
+            model=model_name,
+            thread_id=thread_id,
+            choices=[
+                SSEChoice(
                     delta=SSEDelta(role="assistant", content=content, refusal=refusal),
                     finish_reason="stop"
                 )
             ]
         )
+
+    @staticmethod
+    async def done_marker() -> str:
+        """
+        Create the end-of-stream marker.
+        """
+        return "data: [DONE]"
