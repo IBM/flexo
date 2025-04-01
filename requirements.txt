@@ -13,6 +13,7 @@ mistralai~=1.5.0
 mistral_common>=1.5.1
 openai~=1.61.1
 anthropic~=0.45.2
+mcp~=1.6.0
 
 # Vector Database and Search
 elasticsearch>=8.17.0
