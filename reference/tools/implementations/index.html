@@ -1,0 +1,3946 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://pages.github.com/ibm/flexo/reference/tools/implementations/">
+      
+      
+        <link rel="prev" href="../core/utils/tool_discovery/">
+      
+      
+        <link rel="next" href="rag_tool/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Overview - Flexo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tool-implementations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Flexo" class="md-header__button md-logo" aria-label="Flexo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Flexo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Flexo" class="md-nav__button md-logo" aria-label="Flexo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Flexo
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/building-image/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Images
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Platforms
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Platforms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/platforms/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/platforms/code-engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Code Engine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/platforms/fargate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Fargate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/platforms/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kubernetes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/platforms/openshift/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenShift
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Registries
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Registries
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/registries/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/registries/dockerhub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    DockerHub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/registries/ibm-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IBM Registry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Agent Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../model-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    REST API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Code Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Code Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Agent
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Agent
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent/chat_agent_streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Streaming Chat Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/sse_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SSE Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/request_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Request Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Data Models
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Data Models
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Agent Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/chat_completions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chat Completion Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Streaming Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tool Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/wx_assistant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    WX Assistant Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Database
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            Database
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/base_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Adapter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/elastic_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/milvus_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Milvus Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/query_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Query Builder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    LLM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            LLM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/llm_factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Factory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6_3" id="__nav_7_6_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Adapters
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Adapters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/base_vendor_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Adapter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/anthropic_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Anthropic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/mistral_ai_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MistralAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/openai_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/xai_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    xAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6_3_7" id="__nav_7_6_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    WatsonX
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_7_6_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            WatsonX
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/watsonx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/watsonx/watsonx_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Adapter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/watsonx/watsonx_config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Config
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/watsonx/ibm_token_manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Token Manager
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/adapters/openai_compat_adapter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenAI-Compatible
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6_4" id="__nav_7_6_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Pattern Detection
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            Pattern Detection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/aho_corasick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Aho-Corasick
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/aho_corasick_normalized/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Aho-Corasick Normalized
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/base_buffered_processor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Processor Class
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/buffered_processor_normalized/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Buffered Processor Normalized
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/buffered_processor_standard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Buffered Processor Standard
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/pattern_detection/pattern_utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pattern Utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6_5" id="__nav_7_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tool Detection
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            Tool Detection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/tool_detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/tool_detection/base_detection_strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/tool_detection/detection_result/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Detection Result
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/tool_detection/manual_detection_strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manual Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/tool_detection/vendor_detection_strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vendor Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_7" id="__nav_7_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Prompt Builders
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_7">
+            <span class="md-nav__icon md-icon"></span>
+            Prompt Builders
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/base_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Builder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/prompt_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/anthropic_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Anthropic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/mistral_ai_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MistralAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/openai_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/xai_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    xAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_7_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_7_8" id="__nav_7_7_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    WatsonX
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_7_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_7_8">
+            <span class="md-nav__icon md-icon"></span>
+            WatsonX
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/watsonx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/watsonx/granite/granite_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Granite
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/watsonx/llama/llama_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Llama
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/watsonx/mistral/mistral_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Mistral
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_7_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_7_9" id="__nav_7_7_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    OpenAI Compatible
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_7_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_7_9">
+            <span class="md-nav__icon md-icon"></span>
+            OpenAI Compatible
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/openai_compat/granite_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Granite
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_builders/openai_compat/llama_prompt_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Llama
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7_8" id="__nav_7_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7_8">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/base_tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/base_rest_tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base REST Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/tool_registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tool Registry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_8_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_8_5" id="__nav_7_8_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Core
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_8_5">
+            <span class="md-nav__icon md-icon"></span>
+            Core
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_8_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_8_5_1" id="__nav_7_8_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Parsers
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_7_8_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_8_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Parsers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/parsers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/parsers/base_tool_call_parser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base Parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/parsers/json_tool_call_parser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JSON Parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/parsers/non_json_tool_call_parser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-JSON Parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_8_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_8_5_2" id="__nav_7_8_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Utils
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_7_8_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_8_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Utils
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/utils/token_manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Token Manager
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/utils/tool_builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tool Builder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/utils/tool_discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tool Discovery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_8_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7_8_6" id="__nav_7_8_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Implementations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_8_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7_8_6">
+            <span class="md-nav__icon md-icon"></span>
+            Implementations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provided-example-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provided Example Tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provided Example Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rag-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      RAG Tool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weather-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Weather Tool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wikipedia-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wikipedia Tool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#duckduckgo-search-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      DuckDuckGo Search Tool
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Guidelines
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-new-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating New Tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating New Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tool-configuration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool Configuration Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registration-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registration Process
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Implementation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-in-agentyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration in agent.yaml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Checklist
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Links:
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="rag_tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RAG Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="weather_tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Weather Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="duckduckgo_tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    DuckDuckGo Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_9" id="__nav_7_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Utils
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_9">
+            <span class="md-nav__icon md-icon"></span>
+            Utils
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Factory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provided-example-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provided Example Tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provided Example Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rag-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      RAG Tool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weather-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Weather Tool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wikipedia-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wikipedia Tool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#duckduckgo-search-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      DuckDuckGo Search Tool
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Guidelines
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-new-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating New Tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating New Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tool-configuration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool Configuration Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registration-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registration Process
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Implementation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-in-agentyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration in agent.yaml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Checklist
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Links:
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="tool-implementations">Tool Implementations</h1>
+<h2 id="overview">Overview</h2>
+<p>The implementations directory contains concrete tool implementations that extend the base tool classes to provide specific functionalities. Each tool is designed to handle particular use cases while adhering to the common interfaces defined in the base classes.</p>
+<hr />
+<pre class="mermaid"><code>graph LR
+    A[BaseTool] --&gt; B[RAGTool]
+    A --&gt; F[BaseRESTTool]
+    F --&gt; C[WeatherTool]
+    F --&gt; G[WikipediaTool]
+    F --&gt; I[DuckDuckGoSearchTool]
+
+    subgraph Implementations
+        B
+        C
+        G
+        I
+    end
+
+    B --&gt; D[Knowledge Base]
+    C --&gt; E[Weather API]
+    G --&gt; H[Wikipedia API]
+    I --&gt; J[DuckDuckGo API]
+
+    style A stroke:#333,stroke-width:2px
+    style F stroke:#333,stroke-width:2px
+    style B stroke:#333,stroke-width:2px
+    style C stroke:#333,stroke-width:2px
+    style D stroke:#333,stroke-width:2px
+    style E stroke:#333,stroke-width:2px
+    style G stroke:#333,stroke-width:2px
+    style H stroke:#333,stroke-width:2px
+    style I stroke:#333,stroke-width:2px
+    style J stroke:#333,stroke-width:2px</code></pre>
+<hr />
+<h2 id="provided-example-tools">Provided Example Tools</h2>
+<h3 id="rag-tool"><a href="rag_tool/">RAG Tool</a></h3>
+<p>The RAG (Retrieval-Augmented Generation) tool enables context-aware responses by incorporating information from external knowledge bases.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Dynamic knowledge retrieval</li>
+<li>Contextual response generation</li>
+<li>Configurable similarity thresholds</li>
+<li>Support for multiple knowledge base formats</li>
+</ul>
+<h3 id="weather-tool"><a href="weather_tool/">Weather Tool</a></h3>
+<p>The Weather tool provides access to weather information through integration with weather service APIs.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Current weather conditions</li>
+<li>Weather forecasts</li>
+<li>Location-based queries</li>
+<li>Multiple unit support (metric/imperial)</li>
+</ul>
+<h3 id="wikipedia-tool"><a href="wikipedia_tool/">Wikipedia Tool</a></h3>
+<p>The Wikipedia tool enables direct access to Wikipedia's vast knowledge base through its API integration.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Article retrieval and summarization</li>
+<li>Cross-reference link extraction</li>
+<li>Multi-language support</li>
+<li>Search functionality with relevance ranking</li>
+</ul>
+<h3 id="duckduckgo-search-tool"><a href="duckduckgo_tool/">DuckDuckGo Search Tool</a></h3>
+<p>The DuckDuckGo Search Tool provides web search capabilities through DuckDuckGo's search engine.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Web search for up-to-date information</li>
+<li>Result extraction with titles, snippets, and URLs</li>
+<li>Markdown-formatted search results</li>
+<li>Configurable result limit</li>
+<li>Robust error handling</li>
+</ul>
+<hr />
+<h2 id="implementation-guidelines">Implementation Guidelines</h2>
+<p>When creating new tool implementations, follow these guidelines:</p>
+<ol>
+<li>
+<p><strong>Inheritance</strong></p>
+<ul>
+<li>Extend either <code>BaseTool</code> or <code>BaseRESTTool</code></li>
+<li>Implement all required abstract methods</li>
+<li>Call <code>super().__init__()</code> in constructor</li>
+</ul>
+</li>
+<li>
+<p><strong>Stream Context Integration</strong>: StreamContext enables tools to access and interact with the conversation session state. It provides:</p>
+<ul>
+<li>Access to conversation history and message buffers for context-aware processing and responses</li>
+<li>Tool definitions and current tool calls to coordinate complex multistep operations</li>
+<li>Session metadata and configuration for customized tool behavior</li>
+<li>LLM factory methods for dynamic model access and generation </li>
+<li>For detailed documentation, see <a href="../../data_models/agent/">Agent Data Models</a>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Error Handling</strong></p>
+<ul>
+<li>Use appropriate exception classes</li>
+<li>Provide meaningful error messages</li>
+<li>Handle API-specific error cases</li>
+<li>Include logging</li>
+</ul>
+</li>
+<li>
+<p><strong>Configuration</strong></p>
+<ul>
+<li>Use environment variables for sensitive data</li>
+<li>Make tool behavior configurable</li>
+<li>Document all configuration options</li>
+</ul>
+</li>
+<li>
+<p><strong>Response Format</strong></p>
+<ul>
+<li>Return structured data</li>
+<li>Follow consistent response patterns</li>
+<li>Include status indicators</li>
+<li>Provide error details when needed</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="creating-new-tools">Creating New Tools</h2>
+<h3 id="tool-configuration-example">Tool Configuration Example</h3>
+<p>Below is an example of how tools are configured in the agent.yaml file:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">tools_config</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Weather API Integration</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;weather&quot;</span>
+<span class="w">    </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://api.openweathermap.org/data/2.5/weather&quot;</span>
+<span class="w">    </span><span class="nt">api_key_env</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;OWM_API_KEY&quot;</span>
+
+<span class="w">  </span><span class="c1"># Wikipedia Summary Tool</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;wikipedia&quot;</span>
+<span class="w">    </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://{lang}.wikipedia.org/api/rest_v1/page/summary/{encoded_query}&quot;</span>
+
+<span class="w">  </span><span class="c1"># DuckDuckGo Search Tool</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;duckduckgo_search&quot;</span>
+
+<span class="w">  </span><span class="c1"># RAG Tool with Elasticsearch</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medicare_search&quot;</span>
+<span class="w">    </span><span class="nt">connector_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">connector_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elasticsearch</span>
+<span class="w">      </span><span class="nt">index_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_index</span>
+<span class="w">      </span><span class="nt">api_key_env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ES_API_KEY</span>
+<span class="w">      </span><span class="nt">endpoint_env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ES_ENDPOINT</span>
+<span class="w">      </span><span class="nt">top_k</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="c1"># Additional configuration options...</span>
+</code></pre></div>
+<p>The configuration specifies which tools should be registered and provides any necessary configuration parameters for each tool.</p>
+<h3 id="registration-process">Registration Process</h3>
+<p>Tools are registered through the Flexo <code>agent.yaml</code> configuration file. Here's the step-by-step guide:</p>
+<ol>
+<li>
+<p><strong>Create Tool Class File</strong></p>
+<ul>
+<li>Create a new Python file in the <code>implementations/</code> directory</li>
+<li>Import required base classes:
+   <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.tools.core.base_tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseTool</span>  <span class="c1"># or BaseRESTTool</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>Define Your Tool Class</strong></p>
+<ul>
+<li>Create a class that extends the appropriate base class</li>
+<li>Define a unique <code>name</code> class attribute (this must match the tool name in your config)
+   <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyTool</span><span class="p">(</span><span class="n">BaseTool</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my_tool&quot;</span>  <span class="c1"># Required: unique identifier for the tool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Description of what your tool does&#39;</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>Add Tool Configuration to agent.yaml</strong></p>
+<ul>
+<li>Add your tool configuration under the <code>tools_config</code> section:
+   <div class="highlight"><pre><span></span><code><span class="nt">tools_config</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Other tools...</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_tool&quot;</span>
+<span class="w">    </span><span class="c1"># Optional tool-specific configuration</span>
+<span class="w">    </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://api.example.com/v1/endpoint&quot;</span>
+<span class="w">    </span><span class="nt">api_key_env</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MY_TOOL_API_KEY&quot;</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>Implementation Requirements</strong></p>
+<ul>
+<li>Implement all required abstract methods from the base class</li>
+<li>Add error handling and logging</li>
+<li>Include documentation</li>
+<li>Write unit tests (recommended)</li>
+</ul>
+</li>
+</ol>
+<h3 id="example-implementation">Example Implementation</h3>
+<p>Here's an example using the Weather Tool:</p>
+<h4 id="python-implementation">Python Implementation</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.tools.core.base_rest_tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseRESTTool</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WeatherTool</span><span class="p">(</span><span class="n">BaseRESTTool</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;weather&quot;</span>  <span class="c1"># Must match the name in tools_config</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Get current weather information for a location&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strict</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Implement required methods...</span>
+</code></pre></div>
+<h4 id="configuration-in-agentyaml">Configuration in agent.yaml</h4>
+<div class="highlight"><pre><span></span><code><span class="nt">tools_config</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;weather&quot;</span>
+<span class="w">    </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://api.openweathermap.org/data/2.5/weather&quot;</span>
+<span class="w">    </span><span class="nt">api_key_env</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;OWM_API_KEY&quot;</span>
+</code></pre></div>
+<h3 id="configuration-options">Configuration Options</h3>
+<p>The tools configuration in agent.yaml supports various options depending on the tool type:</p>
+<ul>
+<li><strong>Basic API Tools</strong>: Configure endpoints, API keys, and other connection parameters</li>
+<li><strong>RAG Tools</strong>: Specify connector configurations, vector databases, and search parameters  </li>
+<li><strong>Hidden Tools</strong>: Tools can be made available only to the system by excluding them from the <code>tools_config</code></li>
+</ul>
+<h3 id="implementation-checklist">Implementation Checklist</h3>
+<ol>
+<li>✅ Create new file in implementations directory</li>
+<li>✅ Import appropriate base class</li>
+<li>✅ Define unique name class attribute (must match configuration)</li>
+<li>✅ Implement required methods</li>
+<li>✅ Add documentation</li>
+<li>✅ Add tool to your <code>tools_config</code> list in <code>agent.yaml</code></li>
+<li>✅ Write unit tests (recommended)</li>
+</ol>
+<hr />
+<h2 id="quick-links">Quick Links:</h2>
+<ul>
+<li>See <a href="rag_tool/">Example RAG Tool (medicare handbook)</a></li>
+<li>See <a href="weather_tool/">Example API tool (weather)</a></li>
+<li>See <a href="wikipedia_tool/">Example API tool (wikipedia)</a></li>
+<li>See <a href="duckduckgo_tool/">Example API tool (duckduckgo search)</a></li>
+</ul>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+    
+  </body>
+</html>
