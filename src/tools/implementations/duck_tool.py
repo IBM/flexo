@@ -46,7 +46,7 @@ class DuckDuckGoSearchTool(BaseRESTTool):
 
         super().__init__(config=default_config)
 
-        self.description = "Search DuckDuckGo for information on a specific query."
+        self.description = "Internet / Web search for information on a specific query."
         self.parameters = {
             "type": "object",
             "properties": {

@@ -14,4 +14,4 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && \
     chown -R appuser /app
 USER appuser
 
-CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers ${UVICORN_WORKERS:-$(($(nproc) * 2 + 1))}"]
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 4"]

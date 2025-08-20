@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import time
 from enum import Enum
-from typing import Dict, List, Optional, Any
-
 from pydantic import BaseModel, Field
+from typing import Dict, List, Optional, Any
 
 
 class AgentStatus(str, Enum):
