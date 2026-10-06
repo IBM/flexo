@@ -26,13 +26,17 @@ class BaseMCPTool(BaseTool, ABC):
         self.name = mcp_tool_def.name
         self.description = mcp_tool_def.description or ""
         self.parameters = {
-            "properties": mcp_tool_def.inputSchema.get("properties", {}),
-            "required": mcp_tool_def.inputSchema.get("required", []),
-            "additionalProperties": mcp_tool_def.inputSchema.get("additionalProperties", None)
+            "properties": mcp_tool_def.input_schema.get("properties", {}),
+            "required": mcp_tool_def.input_schema.get("required", []),
+            "additionalProperties": mcp_tool_def.input_schema.get(
+                "additionalProperties", None
+            ),
         }
 
     @abstractmethod
-    async def execute(self, context: Optional[StreamContext] = None, **kwargs) -> ToolResponse:
+    async def execute(
+        self, context: Optional[StreamContext] = None, **kwargs
+    ) -> ToolResponse:
         """
         Execute the MCP-based tool's functionality.
 

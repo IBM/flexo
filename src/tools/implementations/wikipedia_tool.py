@@ -1,6 +1,7 @@
 # src/tools/implementations/wikipedia_tool.py
 
-from urllib.parse import quote
+import re
+from urllib.parse import quote, urlsplit
 from typing import Optional, Any, Dict
 
 from src.data_models.tools import ToolResponse
@@ -11,6 +12,8 @@ from src.tools.core.base_rest_tool import BaseRESTTool, ResponseFormat
 
 class WikipediaTool(BaseRESTTool):
     name = "wikipedia"
+    # Includes legacy Wikipedia codes such as simple, be-tarask and zh-min-nan.
+    LANGUAGE_PATTERN = r"[a-z]{2,12}(?:-[a-z0-9]{1,8}){0,2}"
 
     def __init__(self, config: Optional[Dict] = None):
         """
@@ -25,15 +28,22 @@ class WikipediaTool(BaseRESTTool):
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "The Wikipedia page title or search query to retrieve the summary for."
+                    "description": (
+                        "The Wikipedia page title or search query "
+                        "to retrieve the summary for."
+                    ),
                 },
                 "lang": {
                     "type": "string",
-                    "description": "The language code for Wikipedia (e.g., 'en', 'es', 'fr'). Defaults to 'en'."
-                }
+                    "pattern": "^" + self.LANGUAGE_PATTERN + "$",
+                    "description": (
+                        "The language code for Wikipedia (e.g., 'en', 'es', 'fr'). "
+                        "Defaults to 'en'."
+                    ),
+                },
             },
             "required": ["query"],
-            "additionalProperties": False
+            "additionalProperties": False,
         }
 
         # Set request settings
@@ -43,7 +53,9 @@ class WikipediaTool(BaseRESTTool):
         self.max_retries = 3
         self.retry_delay = 1.0
 
-    async def execute(self, context: Optional[StreamContext] = None, **kwargs) -> ToolResponse:
+    async def execute(
+        self, context: Optional[StreamContext] = None, **kwargs
+    ) -> ToolResponse:
         """
         Execute the Wikipedia API call.
 
@@ -57,14 +69,32 @@ class WikipediaTool(BaseRESTTool):
             ToolResponse: The tool's response with the Wikipedia summary.
         """
         query = kwargs.get("query")
-        if not query:
-            raise ValueError("The 'query' parameter is required.")
+        if not isinstance(query, str) or not query.strip():
+            raise ValueError("The 'query' parameter must be a non-empty string.")
 
         lang = kwargs.get("lang", "en")
-        encoded_query = quote(query)
-        endpoint_url = self.endpoint.format(**{"lang": lang, "encoded_query": encoded_query})
+        if not isinstance(lang, str) or not re.fullmatch(self.LANGUAGE_PATTERN, lang):
+            raise ValueError("The 'lang' parameter must be a Wikipedia language code.")
+        encoded_query = quote(query, safe="")
+        endpoint_url = self.endpoint.format(
+            **{"lang": lang, "encoded_query": encoded_query}
+        )
+        destination = urlsplit(endpoint_url)
+        if (
+            destination.scheme != "https"
+            or destination.hostname != f"{lang}.wikipedia.org"
+            or destination.port not in (None, 443)
+            or destination.username is not None
+            or destination.password is not None
+        ):
+            raise ValueError(
+                "The Wikipedia endpoint must use HTTPS "
+                "on the selected Wikipedia language host."
+            )
 
-        self.logger.info(f"Fetching Wikipedia summary for query: '{query}' in language: '{lang}'")
+        self.logger.info(
+            f"Fetching Wikipedia summary for query: '{query}' in language: '{lang}'"
+        )
         self.logger.debug(f"Endpoint URL: {endpoint_url}")
         self.logger.debug(f"Context: {context}")
 
@@ -73,10 +103,12 @@ class WikipediaTool(BaseRESTTool):
             endpoint_url=endpoint_url,
             response_format=ResponseFormat.JSON,
             use_token=False,  # No token required for the Wikipedia API.
+            # Redirect targets must not bypass destination validation.
+            allow_redirects=False,
             additional_headers={
                 "Accept": "application/json",
-                "User-Agent": "WikipediaTool/1.0"
-            }
+                "User-Agent": "WikipediaTool/1.0",
+            },
         )
 
         tool_response = ToolResponse(
@@ -93,15 +125,19 @@ class WikipediaTool(BaseRESTTool):
             output (Any): Raw API response data.
 
         Returns:
-            str: A formatted string containing the page title, summary, and a link to the full page.
+            str: A formatted string containing the page title, summary, and a link to
+                the full page.
         """
         try:
             if not isinstance(output, dict):
                 return str(output)
 
             # Check if the API indicates a missing page or error
-            if output.get("type") == "https://mediawiki.org/wiki/HyperSwitch/errors/not_found":
-                return f"Error: The page for the given query was not found on Wikipedia."
+            if (
+                output.get("type")
+                == "https://mediawiki.org/wiki/HyperSwitch/errors/not_found"
+            ):
+                return "Error: The page for the given query was not found on Wikipedia."
 
             if "detail" in output:
                 return f"Error: {output['detail']}"
@@ -109,7 +145,9 @@ class WikipediaTool(BaseRESTTool):
             summary_data = {
                 "title": output.get("title"),
                 "summary": output.get("extract"),
-                "page_url": output.get("content_urls", {}).get("desktop", {}).get("page"),
+                "page_url": output.get("content_urls", {})
+                .get("desktop", {})
+                .get("page"),
             }
 
             formatted_output = format_json_to_document(summary_data)

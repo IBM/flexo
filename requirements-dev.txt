@@ -1,16 +1,16 @@
+-r requirements.txt
+
 # Testing
-pytest>=9.1.0
-pytest-asyncio>=1.4.0
+pytest~=9.1.1
+pytest-asyncio~=1.4.0
 
 # Linting and Formatting
-black>=26.5.1
-flake8>=7.3.0
+black~=26.10.0
+flake8~=7.4.1
 
 # Development Tools
-pre-commit>=4.6.0
+pre-commit~=4.6.2
 
 # API Testing
-httpx>=0.28.1
-
-# UI Components
-streamlit>=1.58.0
+httpx~=0.28.1
+httpx2~=2.13.1

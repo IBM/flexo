@@ -1,6 +1,5 @@
 # src/mcp/client.py
 
-import anyio
 import logging
 from typing import Optional, Any, Dict, Callable, Awaitable
 
@@ -15,9 +14,11 @@ logger = logging.getLogger(__name__)
 
 
 class FlexoMCPClient:
-    """A client wrapper for the MCP SDK's ClientSession, supporting both SSE and Stdio transports.
+    """A client wrapper for the MCP SDK's ClientSession, supporting both SSE and Stdio
+        transports.
 
-    This class manages the connection, message processing, and notification handling with the MCP server.
+    This class manages the connection, message processing, and notification handling
+        with the MCP server.
 
     Attributes:
         config (dict[str, Any]): Configuration dictionary.
@@ -43,7 +44,6 @@ class FlexoMCPClient:
         self._streams = None
         self._transport_cm = None
         self._connected = False
-        self._task_group = None
         self._notification_handlers: Dict[str, Callable[[Any], Awaitable[None]]] = {}
         self.observer = MCPToolObserver()
 
@@ -82,25 +82,22 @@ class FlexoMCPClient:
         else:
             raise ValueError(f"Unsupported transport: {transport}")
 
-        # Enter the session context.
+        self._register_default_notification_handlers()
+        self.observer.register_with_mcp_client(self)
+
+        # The SDK owns the receive loop and dispatches messages to our callback.
         await self._session.__aenter__()
 
         # Initialize the session.
         init_result = await self._session.initialize()
-        logger.info(f"Connected to server: {init_result.serverInfo.name} {init_result.serverInfo.version}")
-
-        self._register_default_notification_handlers()
-
-        # Start message processor in a task group.
-        self._task_group = anyio.create_task_group()
-        await self._task_group.__aenter__()
-        self._task_group.start_soon(self._process_incoming_messages)
+        logger.info(
+            "Connected to server: %s %s",
+            init_result.server_info.name,
+            init_result.server_info.version,
+        )
 
         self._connected = True
         logger.info("MCP client session initialized successfully.")
-
-        # Register observer with this client.
-        self.observer.register_with_mcp_client(self)
 
     async def _connect_sse(self) -> None:
         """Connects to the MCP server using SSE transport.
@@ -114,7 +111,9 @@ class FlexoMCPClient:
         logger.info(f"Connecting to SSE server at {sse_url}...")
         self._transport_cm = sse_client(sse_url)
         self._streams = await self._transport_cm.__aenter__()
-        self._session = ClientSession(self._streams[0], self._streams[1])
+        self._session = ClientSession(
+            self._streams[0], self._streams[1], message_handler=self._handle_message
+        )
 
     async def _connect_stdio(self) -> None:
         """Connects to the MCP server using Stdio transport.
@@ -128,7 +127,9 @@ class FlexoMCPClient:
         logger.info(f"Connecting to stdio server with: {command} {args} ...")
         self._transport_cm = stdio_client(server_params)
         self._streams = await self._transport_cm.__aenter__()
-        self._session = ClientSession(self._streams[0], self._streams[1])
+        self._session = ClientSession(
+            self._streams[0], self._streams[1], message_handler=self._handle_message
+        )
 
     def _register_default_notification_handlers(self) -> None:
         """Registers the built-in notification handlers."""
@@ -144,11 +145,6 @@ class FlexoMCPClient:
 
     async def close(self) -> None:
         """Gracefully closes the MCP client session and transport context."""
-        if self._task_group is not None:
-            self._task_group.cancel_scope.cancel()
-            await self._task_group.__aexit__(None, None, None)
-            self._task_group = None
-
         if self._connected and self._session:
             await self._session.__aexit__(None, None, None)
         if self._transport_cm:
@@ -169,33 +165,30 @@ class FlexoMCPClient:
             RuntimeError: If the session is not connected.
         """
         if not self._session:
-            raise RuntimeError("MCP client session not connected. Call connect() first.")
+            raise RuntimeError(
+                "MCP client session not connected. Call connect() first."
+            )
         return self._session
 
-    async def _process_incoming_messages(self) -> None:
-        """Processes incoming messages from the MCP server, including notifications."""
-        logger.info("Starting message processor...")
-        try:
-            async for message in self.session.incoming_messages:
-                if isinstance(message, Exception):
-                    logger.error(f"Error in MCP communication: {message}")
-                elif isinstance(message, types.ServerNotification):
-                    # Attach the session to the notification.
-                    message.session = self.session
-                    await self._handle_notification(message)
-                # Additional message types (e.g., RequestResponder) can be handled here.
-        except Exception as e:
-            logger.exception(f"Error in message processor: {e}")
-        finally:
-            logger.info("Message processor stopped")
+    async def _handle_message(
+        self, message: types.ServerNotification | Exception
+    ) -> None:
+        """Receive notifications and transport errors from the SDK."""
+        if isinstance(message, Exception):
+            logger.error("Error in MCP communication: %s", message)
+        else:
+            await self._handle_notification(message)
 
-    async def _handle_notification(self, notification: types.ServerNotification) -> None:
+    async def _handle_notification(
+        self, notification: types.ServerNotification
+    ) -> None:
         """Handles server notifications based on their type.
 
         Args:
-            notification (types.ServerNotification): The notification received from the server.
+            notification (types.ServerNotification): The notification received from the
+                server.
         """
-        method = notification.root.method
+        method = notification.method
         logger.debug(f"Received notification: {method}")
 
         handler = self._notification_handlers.get(method)
@@ -214,53 +207,69 @@ class FlexoMCPClient:
 
         Args:
             method (str): The notification method name.
-            handler (Callable[[Any], Awaitable[None]]): The asynchronous handler function.
+            handler (Callable[[Any], Awaitable[None]]): The asynchronous handler
+                function.
         """
         self._notification_handlers[method] = handler
         logger.debug(f"Registered handler for {method}")
 
     # --- Notification Handlers ---
-    async def _handle_tools_list_changed(self, notification: types.ServerNotification) -> None:
+    async def _handle_tools_list_changed(
+        self, notification: types.ServerNotification
+    ) -> None:
         """Handles notifications for tools list changes by delegating to the observer.
 
         Args:
-            notification (types.ServerNotification): The notification for tools list change.
+            notification (types.ServerNotification): The notification for tools list
+                change.
         """
         logger.info("Tools list changed notification received")
         # Implementation pending
 
-    async def _handle_resources_list_changed(self, notification: types.ServerNotification) -> None:
+    async def _handle_resources_list_changed(
+        self, notification: types.ServerNotification
+    ) -> None:
         """Handles notifications for resources list changes.
 
         Args:
-            notification (types.ServerNotification): The notification for resources list change.
+            notification (types.ServerNotification): The notification for resources list
+                change.
         """
         logger.info("Resources list changed notification received")
         # Implementation pending
 
-    async def _handle_prompts_list_changed(self, notification: types.ServerNotification) -> None:
+    async def _handle_prompts_list_changed(
+        self, notification: types.ServerNotification
+    ) -> None:
         """Handles notifications for prompts list changes.
 
         Args:
-            notification (types.ServerNotification): The notification for prompts list change.
+            notification (types.ServerNotification): The notification for prompts list
+                change.
         """
         logger.info("Prompts list changed notification received")
         # Implementation pending
 
-    async def _handle_resource_updated(self, notification: types.ServerNotification) -> None:
+    async def _handle_resource_updated(
+        self, notification: types.ServerNotification
+    ) -> None:
         """Handles notifications for resource updates.
 
         Args:
-            notification (types.ServerNotification): The notification for resource update.
+            notification (types.ServerNotification): The notification for resource
+                update.
         """
         logger.info("Resource updated notification received")
         # Implementation pending
 
-    async def _handle_logging_message(self, notification: types.ServerNotification) -> None:
+    async def _handle_logging_message(
+        self, notification: types.ServerNotification
+    ) -> None:
         """Handles logging message notifications from the server.
 
         Args:
-            notification (types.ServerNotification): The notification containing logging info.
+            notification (types.ServerNotification): The notification containing logging
+                info.
         """
         params = getattr(notification, "params", None)
         if params and hasattr(params, "level") and hasattr(params, "message"):
@@ -284,7 +293,9 @@ class FlexoMCPClient:
         """
         return await self.session.list_tools()
 
-    async def call_tool(self, name: str, arguments: dict[str, Any]) -> types.CallToolResult:
+    async def call_tool(
+        self, name: str, arguments: dict[str, Any]
+    ) -> types.CallToolResult:
         """Calls a tool on the MCP server.
 
         Args:
