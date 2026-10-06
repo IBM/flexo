@@ -4,7 +4,7 @@ This guide will help you set up and run the generative AI agent project.
 
 ## Prerequisites
 
-- Python 3.10+: [Install Python](https://www.python.org/downloads/)
+- Python 3.12 (the tested runtime): [Install Python](https://www.python.org/downloads/)
 - Git: [Install Git](https://git-scm.com/)
 - Docker (optional): [Install Docker](https://docs.docker.com/get-docker/)
 - Access to [flexo](https://github.com/IBM/flexo)
@@ -73,10 +73,10 @@ This guide will help you set up and run the generative AI agent project.
    ```bash
    # Navigate to the tests directory
    cd tests
-   
+
    # Run the Streamlit app
    streamlit run test_streamlit_app.py
-   
+
    # This will open a browser window at http://localhost:8501 where you can interact with the agent
    ```
 

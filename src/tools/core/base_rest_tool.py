@@ -21,6 +21,7 @@ load_dotenv()
 
 class HttpMethod(Enum):
     """Supported HTTP methods"""
+
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
@@ -32,6 +33,7 @@ class HttpMethod(Enum):
 
 class ResponseFormat(Enum):
     """Supported response formats"""
+
     JSON = "json"
     TEXT = "text"
     BINARY = "binary"
@@ -69,13 +71,15 @@ class BaseRESTTool(BaseTool):
 
         # Setup authentication
         api_key = os.getenv(self.api_key_env) if self.api_key_env else None
-        client_secret = os.getenv(self.client_secret_env) if self.client_secret_env else None
+        client_secret = (
+            os.getenv(self.client_secret_env) if self.client_secret_env else None
+        )
 
         if self.token_url and api_key and client_secret:
             self.token_manager = OAuth2ClientCredentialsManager(
                 api_key=api_key,
                 client_secret_base64=client_secret,
-                token_url=self.token_url
+                token_url=self.token_url,
             )
         else:
             self.token_manager = None
@@ -90,7 +94,7 @@ class BaseRESTTool(BaseTool):
                 "type": "object",
                 "properties": {},
                 "required": [],
-                "additionalProperties": False
+                "additionalProperties": False,
             }
 
     def add_request_middleware(self, middleware: callable):
@@ -131,9 +135,17 @@ class BaseRESTTool(BaseTool):
                     await sleep(1.0 / self.rate_limit - elapsed)
                 self._last_request_time = time.time()
 
-    def _get_cache_key(self, method: str, endpoint_url: str, params: Optional[Dict], data: Optional[Dict]) -> str:
+    def _get_cache_key(
+        self,
+        method: str,
+        endpoint_url: str,
+        params: Optional[Dict],
+        data: Optional[Dict],
+    ) -> str:
         """Generate a cache key for the request."""
-        return f"{method}:{endpoint_url}:{hash(frozenset(params.items() if params else ()))}:{hash(frozenset(data.items() if data else ()))}"
+        params_hash = hash(frozenset(params.items() if params else ()))
+        data_hash = hash(frozenset(data.items() if data else ()))
+        return f"{method}:{endpoint_url}:{params_hash}:{data_hash}"
 
     async def get_access_token(self) -> Optional[str]:
         """Retrieve access token for API authentication.
@@ -148,25 +160,33 @@ class BaseRESTTool(BaseTool):
             try:
                 access_token = await self.token_manager.get_token()
                 if not access_token:
-                    error_msg = "Failed to retrieve access token - token manager returned None"
-                    stack_trace = ''.join(traceback.format_stack()[:-1])
+                    error_msg = (
+                        "Failed to retrieve access token - token manager returned None"
+                    )
+                    stack_trace = "".join(traceback.format_stack()[:-1])
                     raise RuntimeError(f"{error_msg}\nStack trace:\n{stack_trace}")
                 return access_token
             except Exception as e:
-                stack_trace = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
-                raise RuntimeError(f"Error retrieving access token: {str(e)}\nStack trace:\n{stack_trace}") from e
+                stack_trace = "".join(
+                    traceback.format_exception(type(e), e, e.__traceback__)
+                )
+                raise RuntimeError(
+                    f"Error retrieving access token: {str(e)}\n"
+                    f"Stack trace:\n{stack_trace}"
+                ) from e
         return None
 
     async def make_request(
-            self,
-            method: Union[str, HttpMethod],
-            params: Optional[Dict] = None,
-            data: Optional[Dict] = None,
-            use_token: bool = True,
-            endpoint_url: Optional[str] = None,
-            additional_headers: Optional[Dict] = None,
-            response_format: Union[str, ResponseFormat] = ResponseFormat.JSON,
-            timeout: Optional[float] = None
+        self,
+        method: Union[str, HttpMethod],
+        params: Optional[Dict] = None,
+        data: Optional[Dict] = None,
+        use_token: bool = True,
+        endpoint_url: Optional[str] = None,
+        additional_headers: Optional[Dict] = None,
+        response_format: Union[str, ResponseFormat] = ResponseFormat.JSON,
+        timeout: Optional[float] = None,
+        allow_redirects: bool = True,
     ) -> Any:
         """Make an HTTP request with enhanced features.
 
@@ -179,6 +199,7 @@ class BaseRESTTool(BaseTool):
             additional_headers: Additional HTTP headers.
             response_format: Desired response format.
             timeout: Request timeout in seconds.
+            allow_redirects: Whether to follow HTTP redirects automatically.
 
         Returns:
             Any: Response data in the specified format.
@@ -196,10 +217,7 @@ class BaseRESTTool(BaseTool):
         timeout = timeout or self.default_timeout
 
         # Prepare headers
-        headers = {
-            "Content-Type": self.content_type,
-            "Cache-Control": "no-cache"
-        }
+        headers = {"Content-Type": self.content_type, "Cache-Control": "no-cache"}
         if self.api_key_env:
             headers["apikey"] = os.getenv(self.api_key_env)
         if additional_headers:
@@ -216,7 +234,8 @@ class BaseRESTTool(BaseTool):
             "headers": headers,
             "params": params,
             "data": data,
-            "timeout": timeout
+            "timeout": timeout,
+            "allow_redirects": allow_redirects,
         }
 
         # Apply request middleware
@@ -236,14 +255,20 @@ class BaseRESTTool(BaseTool):
                                 try:
                                     result = await response.json()
                                 except json.JSONDecodeError:
-                                    self.logger.error("Failed to decode JSON from response")
-                                    return {"error": "Invalid JSON response from server"}
+                                    self.logger.error(
+                                        "Failed to decode JSON from response"
+                                    )
+                                    return {
+                                        "error": "Invalid JSON response from server"
+                                    }
                             elif response_format == ResponseFormat.TEXT.value:
                                 result = await response.text()
                             elif response_format == ResponseFormat.BINARY.value:
                                 result = await response.read()
                             else:
-                                raise ValueError(f"Unsupported response format: {response_format}")
+                                raise ValueError(
+                                    f"Unsupported response format: {response_format}"
+                                )
 
                             # Apply response middleware
                             result = await self._apply_response_middleware(result)
@@ -255,22 +280,37 @@ class BaseRESTTool(BaseTool):
                         if response.status == 400:
                             return {"error": f"Bad Request: {error_response}"}
                         elif response.status == 401:
-                            return {"error": "Unauthorized access - check API key or token."}
+                            return {
+                                "error": "Unauthorized access - check API key or token."
+                            }
                         elif response.status == 403:
                             return {"error": "Forbidden - insufficient permissions."}
                         elif response.status == 404:
-                            return {"error": "Resource not found - verify endpoint URL."}
+                            return {
+                                "error": "Resource not found - verify endpoint URL."
+                            }
                         elif response.status >= 500:
                             if attempt < self.max_retries - 1:
-                                await sleep(self.retry_delay * (2 ** attempt))  # Exponential backoff
+                                await sleep(
+                                    self.retry_delay * (2**attempt)
+                                )  # Exponential backoff
                                 continue
-                            return {"error": "Server error - the API is currently unavailable."}
+                            return {
+                                "error": (
+                                    "Server error - the API is currently unavailable."
+                                )
+                            }
                         else:
-                            return {"error": f"Unexpected status code {response.status}: {error_response}"}
+                            return {
+                                "error": (
+                                    f"Unexpected status code {response.status}: "
+                                    f"{error_response}"
+                                )
+                            }
 
             except aiohttp.ClientError as e:
                 if attempt < self.max_retries - 1:
-                    await sleep(self.retry_delay * (2 ** attempt))
+                    await sleep(self.retry_delay * (2**attempt))
                     continue
                 self.logger.error(f"Network error: {str(e)}", exc_info=True)
                 return {"error": f"Network error: {str(e)}"}

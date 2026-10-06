@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v6.0.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -10,19 +10,19 @@ repos:
     -   id: detect-private-key
 
 -   repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 26.10.0
     hooks:
     -   id: black
 
 -   repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 7.4.1
     hooks:
     -   id: flake8
         args: ['--max-line-length=88']
 
 # DCO check
 -   repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v2.1.1
+    rev: v4.4.0
     hooks:
     -   id: conventional-pre-commit
         stages: [commit-msg]

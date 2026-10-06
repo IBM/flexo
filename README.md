@@ -35,13 +35,16 @@
    git remote add upstream https://github.com/ibm/flexo.git
    ```
 
-2. Set up the environment:
+2. Set up the environment with Python 3.12 (the tested runtime):
    ```bash
    # Create virtual environment
    python -m venv venv
    source venv/bin/activate  # or `venv\Scripts\activate` on Windows
    pip install -r requirements.txt
    ```
+
+   For development and tests, install `requirements-dev.txt` and run
+   `python -m pytest`. For documentation, install `requirements-docs.txt`.
 
 3. Configure:
    - Copy `.env.example` to `.env` and add your credentials
@@ -126,7 +129,7 @@ flexo/
 │   ├── database/         # Database adapters
 │   ├── llm/              # LLM components
 │   ├── prompt_builders/  # Core prompt generation
-│   ├── tools/                   
+│   ├── tools/
 │   │   ├── core/                # Core tool components
 │   │   ├── implementations/     # 🔧 Add your custom tools here!
 │   │   └──notebooks/            # Notebook(s) for tool development/testing

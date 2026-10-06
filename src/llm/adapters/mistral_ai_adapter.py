@@ -4,7 +4,7 @@ import os
 import json
 import logging
 from datetime import datetime
-from mistralai import Mistral
+from mistralai.client import Mistral
 from typing import AsyncGenerator, List, Optional
 
 from src.data_models.tools import Tool
@@ -34,7 +34,8 @@ class MistralAIAdapter(BaseVendorAdapter):
         """Initialize the Mistral AI Adapter with model configuration.
 
         Args:
-            `model_name` (str): The identifier of the Mistral model to use (e.g., "mistral-tiny").
+            `model_name` (str): The identifier of the Mistral model to use (e.g.,
+                "mistral-tiny").
             `**default_params`: Additional parameters to include in all API calls.
                 Common parameters include temperature, max_tokens, etc.
 
@@ -43,7 +44,9 @@ class MistralAIAdapter(BaseVendorAdapter):
         """
         self.api_key = os.getenv("MISTRAL_API_KEY")
         if not self.api_key:
-            raise ValueError("Missing Mistral API key. Set the MISTRAL_API_KEY environment variable.")
+            raise ValueError(
+                "Missing Mistral API key. Set the MISTRAL_API_KEY environment variable."
+            )
 
         self.client = Mistral(api_key=self.api_key)
         self.model_name = model_name
@@ -52,9 +55,7 @@ class MistralAIAdapter(BaseVendorAdapter):
         logger.debug(f"Default parameters configured: {default_params}")
 
     async def gen_sse_stream(
-            self,
-            prompt: str,
-            **kwargs
+        self, prompt: str, **kwargs
     ) -> AsyncGenerator[SSEChunk, None]:
         """Generate SSE stream from a single text prompt.
 
@@ -76,10 +77,10 @@ class MistralAIAdapter(BaseVendorAdapter):
             yield chunk
 
     async def gen_chat_sse_stream(
-            self,
-            messages: List[TextChatMessage],
-            tools: Optional[List[Tool]] = None,
-            **kwargs,
+        self,
+        messages: List[TextChatMessage],
+        tools: Optional[List[Tool]] = None,
+        **kwargs,
     ) -> AsyncGenerator[SSEChunk, None]:
         """Generate a streaming chat response from a sequence of messages.
 
@@ -121,11 +122,13 @@ class MistralAIAdapter(BaseVendorAdapter):
     async def _convert_to_sse_chunk(self, raw_chunk) -> SSEChunk:
         """Convert Mistral's response chunk to standardized SSE format.
 
-        Uses model_dump_json() to convert Mistral's response to a clean JSON representation,
+        Uses model_dump_json() to convert Mistral's response to a clean JSON
+            representation,
         then constructs an SSEChunk from the parsed data.
 
         Args:
-            raw_chunk: Raw chunk from Mistral's API, could be CompletionChunk or CompletionEvent.
+            raw_chunk: Raw chunk from Mistral's API, could be CompletionChunk or
+                CompletionEvent.
 
         Returns:
             SSEChunk: Standardized chunk format for consistent handling.
@@ -134,79 +137,85 @@ class MistralAIAdapter(BaseVendorAdapter):
             ValueError: If chunk conversion fails due to unexpected format.
         """
         try:
-            # Use model_dump_json() to get a clean JSON representation where Unset values are omitted
+            # Use model_dump_json() to get a clean JSON representation where Unset
+            # values are omitted
             chunk_json = raw_chunk.model_dump_json()
             chunk_data = json.loads(chunk_json)
 
             # Extract the 'data' field if present (based on the provided example)
-            if 'data' in chunk_data:
-                chunk_data = chunk_data['data']
+            if "data" in chunk_data:
+                chunk_data = chunk_data["data"]
 
             logger.debug(f"Converting chunk ID: {chunk_data.get('id', 'unknown')}")
 
             # Process choices
             choices = []
-            for choice_data in chunk_data.get('choices', []):
-                delta_data = choice_data.get('delta', {})
+            for choice_data in chunk_data.get("choices", []):
+                delta_data = choice_data.get("delta", {})
 
                 # Process tool calls if present
                 tool_calls = None
-                if 'tool_calls' in delta_data:
+                if "tool_calls" in delta_data:
                     tool_calls = []
-                    for tc_data in delta_data['tool_calls']:
+                    for tc_data in delta_data["tool_calls"]:
                         function = None
-                        if 'function' in tc_data:
-                            # Ensure name and arguments are valid strings, defaulting to empty strings if missing or None
-                            fn_name = tc_data['function'].get('name')
-                            fn_name = '' if fn_name is None else fn_name
+                        if "function" in tc_data:
+                            # Ensure name and arguments are valid strings, defaulting to
+                            # empty strings if missing or None
+                            fn_name = tc_data["function"].get("name")
+                            fn_name = "" if fn_name is None else fn_name
 
-                            fn_args = tc_data['function'].get('arguments')
-                            fn_args = '' if fn_args is None else fn_args
+                            fn_args = tc_data["function"].get("arguments")
+                            fn_args = "" if fn_args is None else fn_args
 
-                            function = SSEFunction(
-                                name=fn_name,
-                                arguments=fn_args
-                            )
+                            function = SSEFunction(name=fn_name, arguments=fn_args)
 
-                        # Ensure type is always a string, defaulting to 'function' if missing or None
-                        tool_call_type = tc_data.get('type')
+                        # Ensure type is always a string, defaulting to 'function' if
+                        # missing or None
+                        tool_call_type = tc_data.get("type")
                         if tool_call_type is None:
-                            tool_call_type = 'function'
+                            tool_call_type = "function"
 
-                        tool_calls.append(SSEToolCall(
-                            index=tc_data.get('index', 0),
-                            id=tc_data.get('id'),
-                            type=tool_call_type,
-                            function=function
-                        ))
+                        tool_calls.append(
+                            SSEToolCall(
+                                index=tc_data.get("index", 0),
+                                id=tc_data.get("id"),
+                                type=tool_call_type,
+                                function=function,
+                            )
+                        )
 
                 # Create delta
                 delta = SSEDelta(
-                    role=delta_data.get('role'),
-                    content=delta_data.get('content'),
+                    role=delta_data.get("role"),
+                    content=delta_data.get("content"),
                     tool_calls=tool_calls,
-                    refusal=delta_data.get('refusal')
+                    refusal=delta_data.get("refusal"),
                 )
 
                 # Create choice
-                choices.append(SSEChoice(
-                    index=choice_data.get('index', 0),
-                    delta=delta,
-                    logprobs=choice_data.get('logprobs'),
-                    finish_reason=choice_data.get('finish_reason')
-                ))
+                choices.append(
+                    SSEChoice(
+                        index=choice_data.get("index", 0),
+                        delta=delta,
+                        logprobs=choice_data.get("logprobs"),
+                        finish_reason=choice_data.get("finish_reason"),
+                    )
+                )
 
             # Create and return the SSEChunk
             return SSEChunk(
-                id=chunk_data.get('id', f"gen-{id(chunk_data)}"),
-                object=chunk_data.get('object', 'chat.completion.chunk'),
-                created=chunk_data.get('created', int(datetime.now().timestamp())),
-                model=chunk_data.get('model', self.model_name),
+                id=chunk_data.get("id", f"gen-{id(chunk_data)}"),
+                object=chunk_data.get("object", "chat.completion.chunk"),
+                created=chunk_data.get("created", int(datetime.now().timestamp())),
+                model=chunk_data.get("model", self.model_name),
                 service_tier=None,  # Default to None if not provided by Mistral
                 system_fingerprint=None,  # Default to None if not provided by Mistral
-                choices=choices
+                choices=choices,
             )
 
         except Exception as e:
             logger.error(f"Error converting Mistral chunk: {e}", exc_info=True)
-            raise ValueError(f"Failed to convert Mistral response to SSEChunk: {str(e)}") from e
+            raise ValueError(
+                f"Failed to convert Mistral response to SSEChunk: {str(e)}"
+            ) from e
